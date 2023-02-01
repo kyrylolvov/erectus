@@ -1,5 +1,12 @@
 :root {
-  --main-text-color: #262626;
+  --main-bg-color: #0e1116;
+  --secondary-bg-color: #22262d;
+
+  --light-text-color: #f0f6fc;
+  --secondary-text-color: #666671;
+
+  --cta-button-color: #8866ff;
+  --cta-button-hover-color: #a28df8;
 }
 
 html {
@@ -14,16 +21,10 @@ html {
 
 body {
   margin: 0;
+  background: var(--main-bg-color);
+  color: var(--light-text-color);
 }
 
-h1 {
-  font-family: 'Termina';
-  color: var(--main-text-color);
-  margin: 0;
-}
-
-p {
-  font-family: 'Futura PT';
-  color: var(--main-text-color);
-  margin: 0;
+.MuiTypography-root {
+  font-family: 'Inter' !important;
 }
