@@ -6,6 +6,7 @@ specifiers:
   '@emotion/react': ^11.10.5
   '@emotion/styled': ^11.10.5
   '@mui/icons-material': ^5.11.0
+  '@mui/joy': 5.0.0-alpha.65
   '@mui/material': ^5.11.7
   '@types/react': ^18.0.26
   '@types/react-dom': ^18.0.9
@@ -33,6 +34,7 @@ dependencies:
   '@emotion/react': 11.10.5_3stiutgnnbnfnf3uowm5cip22i
   '@emotion/styled': 11.10.5_jrh5enlbqfbnumycmktdqgd6se
   '@mui/icons-material': 5.11.0_m3y2ykptchyoygtoroit6l3ehq
+  '@mui/joy': 5.0.0-alpha.65_rqh7qj4464ntrqrt6banhaqg4q
   '@mui/material': 5.11.7_rqh7qj4464ntrqrt6banhaqg4q
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -765,6 +767,40 @@ packages:
       '@mui/material': 5.11.7_rqh7qj4464ntrqrt6banhaqg4q
       '@types/react': 18.0.27
       react: 18.2.0
+    dev: false
+
+  /@mui/joy/5.0.0-alpha.65_rqh7qj4464ntrqrt6banhaqg4q:
+    resolution: {integrity: sha512-Whtfn8ULpvUOfgtrZ76XutYXTqNEDD/hwRFcWc5OV50NzTu5d+TC+hQARa0EKXd2YGktaolvnRdjN6beDGtlWg==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@emotion/react': ^11.5.0
+      '@emotion/styled': ^11.3.0
+      '@types/react': ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0
+      react-dom: ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      '@emotion/react':
+        optional: true
+      '@emotion/styled':
+        optional: true
+      '@types/react':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.20.13
+      '@emotion/react': 11.10.5_3stiutgnnbnfnf3uowm5cip22i
+      '@emotion/styled': 11.10.5_jrh5enlbqfbnumycmktdqgd6se
+      '@mui/base': 5.0.0-alpha.116_5ndqzdd6t4rivxsukjv3i3ak2q
+      '@mui/core-downloads-tracker': 5.11.7
+      '@mui/system': 5.11.7_gzalmy7izvhol7vh4xfy3dq6ua
+      '@mui/types': 7.2.3_@types+react@18.0.27
+      '@mui/utils': 5.11.7_react@18.2.0
+      '@types/react': 18.0.27
+      clsx: 1.2.1
+      csstype: 3.1.1
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-is: 18.2.0
     dev: false
 
   /@mui/material/5.11.7_rqh7qj4464ntrqrt6banhaqg4q:

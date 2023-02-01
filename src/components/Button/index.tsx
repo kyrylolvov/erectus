@@ -5,10 +5,11 @@ import * as css from './css';
 interface ButtonProps {
   text: string;
   sx?: mui.SxProps<mui.Theme> | undefined;
+  onClick: () => void;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, sx }) => (
-  <mui.Button css={css.button} sx={sx}>
+const Button: React.FC<ButtonProps> = ({ text, sx, onClick }) => (
+  <mui.Button css={css.button} sx={sx} onClick={onClick}>
     {text}
   </mui.Button>
 );

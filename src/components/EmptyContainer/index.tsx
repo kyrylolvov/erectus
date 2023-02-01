@@ -4,7 +4,11 @@ import * as muiIcons from '@mui/icons-material';
 import * as css from './css';
 import Button from '../Button';
 
-const EmptyContainer: React.FC = () => (
+interface EmptyContainerProps {
+  openModal: () => void;
+}
+
+const EmptyContainer: React.FC<EmptyContainerProps> = ({ openModal }) => (
   <mui.Box css={css.emptyContainer}>
     <mui.Box css={css.cubeIconContainer}>
       <muiIcons.Dashboard />
@@ -13,7 +17,7 @@ const EmptyContainer: React.FC = () => (
     <mui.Typography variant="body1">
       You don&apos;t have any Tables yet. Click the button below to get started
     </mui.Typography>
-    <Button text="Create Table" sx={{ marginTop: '16px' }} />
+    <Button text="Create Table" sx={{ marginTop: '24px' }} onClick={openModal} />
   </mui.Box>
 );
 

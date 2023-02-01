@@ -5,8 +5,7 @@
   --light-text-color: #f0f6fc;
   --secondary-text-color: #666671;
 
-  --cta-button-color: #8866ff;
-  --cta-button-hover-color: #a28df8;
+  --cta-button-color: #c5f74f;
 }
 
 html {
@@ -27,4 +26,47 @@ body {
 
 .MuiTypography-root {
   font-family: 'Inter' !important;
+}
+
+:not(.MuiPopover-root).MuiModal-root .MuiBackdrop-root {
+  backdrop-filter: blur(3px);
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  background-color: hsla(0, 0%, 100%, 0.15) !important;
+}
+
+.Joy-focused {
+  --Input-focusedHighlight: var(--cta-button-color) !important;
+}
+
+.MuiOption-root {
+  background-color: red;
+}
+
+.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--cta-button-color) !important;
+}
+
+.MuiPaper-root .MuiList-root {
+  background: #171b21;
+  color: #cad1d8;
+}
+
+.MuiPaper-root .MuiList-root li:hover {
+  background: #22262d;
+}
+
+.MuiPaper-root .MuiList-root li:last-child {
+  margin-top: 8px;
+}
+
+.MuiPaper-root .MuiList-root li {
+  font-size: 14px;
+}
+
+.MuiPaper-root .MuiList-root .Mui-selected {
+  background: #22262d;
+}
+
+.MuiPaper-root .MuiList-root .Mui-selected:hover {
+  background: #22262d;
 }
