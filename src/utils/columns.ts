@@ -3,4 +3,4 @@ export enum ColumnType {
   BigSerial = 'bigserial',
 }
 
-export const variableNameRegex = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+export const variableNameRegex = /^[a-zA-Z][a-zA-Z0-9_]*$/;

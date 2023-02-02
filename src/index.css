@@ -8,16 +8,6 @@
   --cta-button-color: #c5f74f;
 }
 
-html {
-  box-sizing: border-box;
-}
-
-*,
-*:before,
-*:after {
-  box-sizing: inherit;
-}
-
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -46,14 +36,20 @@ html {
   src: url('assets/fonts/Inter-Bold.ttf') format('opentype');
 }
 
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
 body {
   margin: 0;
   background: var(--main-bg-color);
   color: var(--light-text-color);
-}
-
-.MuiTypography-root {
-  font-family: 'Inter' !important;
 }
 
 :not(.MuiPopover-root).MuiModal-root .MuiBackdrop-root {

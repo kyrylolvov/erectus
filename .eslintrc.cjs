@@ -13,6 +13,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'react/no-unknown-property': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
+    '@typescript-eslint/no-shadow': 'off',
     'prettier/prettier': 'error',
   },
 };

@@ -5,7 +5,7 @@ import * as css from './css';
 import EmptyContainer from '../../components/EmptyContainer';
 import AddTableModal from '../../components/AddTableModal';
 import { GenericObject, saveTables } from '../../utils/localStorage';
-import TableListItem from '../../components/TableListItem';
+import ListItem from '../../components/ListItem';
 
 interface MainPageProps {
   tables: GenericObject;
@@ -38,7 +38,7 @@ const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
       ) : (
         <mui.Box css={css.tableList}>
           {Object.keys(tables).map((key) => (
-            <TableListItem key={key} setTables={setTables} tableName={key} />
+            <ListItem key={key} setTables={setTables} text={key} type="table" />
           ))}
         </mui.Box>
       )}

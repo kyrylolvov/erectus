@@ -18,6 +18,12 @@ export const text: CSSWithTheme = () => ({
   width: '100%',
 });
 
+export const columnIcon: CSSWithTheme = () => ({
+  color: 'var(--secondary-text-color)',
+  marginTop: '2px',
+  width: '18px',
+});
+
 export const iconMore: CSSWithTheme = () => ({
   cursor: 'pointer',
   color: 'var(--secondary-text-color)',
@@ -28,8 +34,10 @@ export const iconMore: CSSWithTheme = () => ({
   },
 });
 
-export const deleteTable: CSSWithTheme = () => ({
-  color: '#D15B6B',
-  fontSize: '14px',
-  cursor: 'pointer',
-});
+export const deleteTable =
+  (disabled: boolean): CSSWithTheme =>
+  () => ({
+    color: disabled ? '#666670' : '#D15B6B',
+    fontSize: '14px',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+  });
