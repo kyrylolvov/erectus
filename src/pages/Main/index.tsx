@@ -4,12 +4,16 @@ import * as muiIcons from '@mui/icons-material';
 import * as css from './css';
 import EmptyContainer from '../../components/EmptyContainer';
 import AddTableModal from '../../components/AddTableModal';
-import { GenericObject, loadTables, saveTables } from '../../utils/localStorage';
+import { GenericObject, saveTables } from '../../utils/localStorage';
 import TableListItem from '../../components/TableListItem';
 
-const Main: React.FC = () => {
+interface MainPageProps {
+  tables: GenericObject;
+  setTables: React.Dispatch<React.SetStateAction<GenericObject>>;
+}
+
+const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [tables, setTables] = useState<GenericObject>(loadTables() ?? {});
 
   useEffect(() => {
     saveTables(tables);
@@ -29,12 +33,17 @@ const Main: React.FC = () => {
       ) : (
         <mui.Box css={css.tableList}>
           {Object.keys(tables).map((key) => (
-            <TableListItem setTables={setTables} tableName={key} />
+            <TableListItem key={key} setTables={setTables} tableName={key} />
           ))}
         </mui.Box>
       )}
 
-      <AddTableModal setTables={setTables} open={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
+      <AddTableModal
+        tables={tables}
+        setTables={setTables}
+        open={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
     </mui.Box>
   );
 };
