@@ -4,9 +4,7 @@ export const container: CSSWithTheme = () => ({
   justifyContent: 'space-between',
   border: '1px solid var(--secondary-text-color)',
   borderRadius: '6px',
-  padding: '12px',
   transition: 'all 0.1s',
-  cursor: 'pointer',
 
   ':hover': {
     border: '1px solid #494F57',
@@ -14,9 +12,16 @@ export const container: CSSWithTheme = () => ({
   },
 });
 
+export const text: CSSWithTheme = () => ({
+  padding: '12px 0 12px 12px',
+  cursor: 'pointer',
+  width: '100%',
+});
+
 export const iconMore: CSSWithTheme = () => ({
   cursor: 'pointer',
   color: 'var(--secondary-text-color)',
+  marginRight: '12px',
 
   ':hover': {
     color: 'white',

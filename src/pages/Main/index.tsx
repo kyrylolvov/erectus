@@ -29,7 +29,12 @@ const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
       </mui.Box>
 
       {JSON.stringify(tables) === '{}' ? (
-        <EmptyContainer openModal={() => setIsAddModalOpen(true)} />
+        <EmptyContainer
+          title="No Tables"
+          text={"You don't have any Tables yet. Click the button below to get started"}
+          buttonText="Create Table"
+          buttonAction={() => setIsAddModalOpen(true)}
+        />
       ) : (
         <mui.Box css={css.tableList}>
           {Object.keys(tables).map((key) => (

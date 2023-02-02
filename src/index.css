@@ -18,6 +18,34 @@ html {
   box-sizing: inherit;
 }
 
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  src: url('assets/fonts/Inter-Regular.ttf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  src: url('assets/fonts/Inter-Medium.ttf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  src: url('assets/fonts/Inter-SemiBold.ttf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  src: url('assets/fonts/Inter-Bold.ttf') format('opentype');
+}
+
 body {
   margin: 0;
   background: var(--main-bg-color);

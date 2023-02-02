@@ -12,6 +12,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'import/prefer-default-export': 'off',
     'react/no-unknown-property': 'off',
+    '@typescript-eslint/no-unused-expressions': 'off',
     'prettier/prettier': 'error',
   },
 };
