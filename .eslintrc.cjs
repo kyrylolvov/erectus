@@ -4,6 +4,7 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json',
   },
+  ignorePatterns: ['src/@types/utils.ts', 'src/services/converter/**', 'src/test.ts'],
   rules: {
     'unused-imports/no-unused-imports': 'error',
     'react/require-default-props': 'off',

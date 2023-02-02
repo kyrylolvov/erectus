@@ -33,6 +33,7 @@ specifiers:
   typescript: ^4.9.3
   vite: ^4.0.0
   yup: ^0.32.11
+  zod: ^3.20.2
 
 dependencies:
   '@emotion/react': 11.10.5_3stiutgnnbnfnf3uowm5cip22i
@@ -45,6 +46,7 @@ dependencies:
   react-dom: 18.2.0_react@18.2.0
   react-router-dom: 6.8.0_biqbaboplfbrettd7655fr4n2y
   yup: 0.32.11
+  zod: 3.20.2
 
 devDependencies:
   '@emotion/babel-plugin': 11.10.5
@@ -3271,4 +3273,8 @@ packages:
       nanoclone: 0.2.1
       property-expr: 2.0.5
       toposort: 2.0.2
+    dev: false
+
+  /zod/3.20.2:
+    resolution: {integrity: sha512-1MzNQdAvO+54H+EaK5YpyEy0T+Ejo/7YLHS93G3RnYWh5gaotGHwGeN/ZO687qEDU2y4CdStQYXVHIgrUl5UVQ==}
     dev: false
