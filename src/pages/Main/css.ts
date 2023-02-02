@@ -25,3 +25,9 @@ export const addButton: CSSWithTheme = () => ({
     background: 'var(--cta-button-color)',
   },
 });
+
+export const tableList: CSSWithTheme = () => ({
+  marginTop: '48px',
+  display: 'grid',
+  gap: '16px',
+});

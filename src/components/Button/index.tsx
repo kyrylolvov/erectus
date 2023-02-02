@@ -4,12 +4,13 @@ import * as css from './css';
 
 interface ButtonProps {
   text: string;
-  sx?: mui.SxProps<mui.Theme> | undefined;
   onClick: () => void;
+  sx?: mui.SxProps<mui.Theme> | undefined;
+  disabled?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({ text, sx, onClick }) => (
-  <mui.Button css={css.button} sx={sx} onClick={onClick}>
+const Button: React.FC<ButtonProps> = ({ text, sx, onClick, disabled }) => (
+  <mui.Button css={css.button} sx={sx} onClick={onClick} disabled={disabled}>
     {text}
   </mui.Button>
 );

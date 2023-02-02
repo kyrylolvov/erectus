@@ -70,3 +70,8 @@ body {
 .MuiPaper-root .MuiList-root .Mui-selected:hover {
   background: #22262d;
 }
+
+#delete-table-popover .MuiPaper-root {
+  background: #171b21;
+  padding: 8px 16px;
+}

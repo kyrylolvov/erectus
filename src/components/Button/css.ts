@@ -11,4 +11,10 @@ export const button: CSSWithTheme = () => ({
   ':hover': {
     background: 'var(--cta-button-color)',
   },
+
+  ':disabled': {
+    background: '#22262D',
+    color: '#666671',
+    cursor: 'not-allowed',
+  },
 });
