@@ -7,6 +7,7 @@ import Modal from '../Modal';
 import * as css from './css';
 import Button from '../Button';
 import { GenericObject } from '../../utils/localStorage';
+import { ColumnType, variableNameRegex } from '../../utils/columns';
 
 interface AddTableModalProps {
   open: boolean;
@@ -32,8 +33,8 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
   );
 
   const validationSchema = yup.object({
-    tableName: yup.string().required("Field can't be empty"),
-    primaryKeyName: yup.string().required("Field can't be empty"),
+    tableName: yup.string().required("Field can't be empty").matches(variableNameRegex),
+    primaryKeyName: yup.string().required("Field can't be empty").matches(variableNameRegex),
   });
 
   const { values, errors, handleSubmit, handleChange, setFieldValue, resetForm } = useFormik({
@@ -100,8 +101,8 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
             defaultValue="int"
             css={css.select}
           >
-            <mui.MenuItem value="serial">Auto-incremented integer</mui.MenuItem>
-            <mui.MenuItem value="bigSerial">Auto-incremented big integer</mui.MenuItem>
+            <mui.MenuItem value={ColumnType.Serial}>Auto-incremented integer</mui.MenuItem>
+            <mui.MenuItem value={ColumnType.BigSerial}>Auto-incremented big integer</mui.MenuItem>
           </mui.Select>
         </mui.Box>
       </mui.Box>

@@ -5,19 +5,20 @@ import * as css from './css';
 import Button from '../Button';
 
 interface EmptyContainerProps {
-  openModal: () => void;
+  title: string;
+  text: string;
+  buttonText: string;
+  buttonAction: () => void;
 }
 
-const EmptyContainer: React.FC<EmptyContainerProps> = ({ openModal }) => (
+const EmptyContainer: React.FC<EmptyContainerProps> = ({ title, text, buttonText, buttonAction }) => (
   <mui.Box css={css.emptyContainer}>
     <mui.Box css={css.cubeIconContainer}>
       <muiIcons.Dashboard />
     </mui.Box>
-    <mui.Typography variant="subtitle1">No Tables</mui.Typography>
-    <mui.Typography variant="body1">
-      You don&apos;t have any Tables yet. Click the button below to get started
-    </mui.Typography>
-    <Button text="Create Table" sx={{ marginTop: '24px' }} onClick={openModal} />
+    <mui.Typography variant="subtitle1">{title}</mui.Typography>
+    <mui.Typography variant="body1">{text}</mui.Typography>
+    <Button text={buttonText} sx={{ marginTop: '24px' }} onClick={buttonAction} />
   </mui.Box>
 );
 

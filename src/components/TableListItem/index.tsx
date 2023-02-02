@@ -17,8 +17,10 @@ const TableListItem: React.FC<TableListItemProps> = ({ tableName, setTables }) =
   const [anchorEl, setAnchorEl] = React.useState<SVGSVGElement | null>(null);
 
   return (
-    <mui.Box css={css.container} onClick={() => navigate(`/tables/${tableName}`)}>
-      <mui.Typography>{tableName}</mui.Typography>
+    <mui.Box css={css.container}>
+      <mui.Typography onClick={() => navigate(`/tables/${tableName}`)} css={css.text}>
+        {tableName}
+      </mui.Typography>
       <muiIcons.MoreVert css={css.iconMore} onClick={(e) => setAnchorEl(e.currentTarget)} />
       <mui.Popover
         open={Boolean(anchorEl)}

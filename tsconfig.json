@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "CommonJS",
+    "target": "ESNext",
     "types": ["@emotion/react/types/css-prop"],
-    // "useDefineForClassFields": true,
+    "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "skipLibCheck": true,
@@ -16,10 +16,6 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx"
-  },
-  "ts-node": {
-    // Tell ts-node CLI to install the --loader automatically
-    "esm": true
   },
   "include": ["src", "./.eslintrc.cjs"],
   "references": [{ "path": "./tsconfig.node.json" }]
