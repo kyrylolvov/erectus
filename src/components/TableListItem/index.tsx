@@ -2,6 +2,7 @@
 import React from 'react';
 import * as mui from '@mui/material';
 import * as muiIcons from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import * as css from './css';
 import { GenericObject } from '../../utils/localStorage';
 
@@ -11,10 +12,12 @@ interface TableListItemProps {
 }
 
 const TableListItem: React.FC<TableListItemProps> = ({ tableName, setTables }) => {
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = React.useState<SVGSVGElement | null>(null);
 
   return (
-    <mui.Box css={css.container}>
+    <mui.Box css={css.container} onClick={() => navigate(`/tables/${tableName}`)}>
       <mui.Typography>{tableName}</mui.Typography>
       <muiIcons.MoreVert css={css.iconMore} onClick={(e) => setAnchorEl(e.currentTarget)} />
       <mui.Popover

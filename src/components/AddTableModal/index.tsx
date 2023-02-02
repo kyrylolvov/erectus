@@ -6,11 +6,13 @@ import * as yup from 'yup';
 import Modal from '../Modal';
 import * as css from './css';
 import Button from '../Button';
+import { GenericObject } from '../../utils/localStorage';
 
 interface AddTableModalProps {
   open: boolean;
   onClose: () => void;
   setTables: React.Dispatch<React.SetStateAction<{}>>;
+  tables: GenericObject;
 }
 
 interface AddTableFormValues {
@@ -19,7 +21,7 @@ interface AddTableFormValues {
   primaryKeyType: 'serial' | 'bigSerial';
 }
 
-const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables }) => {
+const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables, tables }) => {
   const initialValues = useMemo<AddTableFormValues>(
     () => ({
       tableName: '',
@@ -108,7 +110,9 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables 
         <Button
           text="Continue"
           onClick={() => handleSubmit()}
-          disabled={JSON.stringify(errors) !== '{}' || values.tableName === ''}
+          disabled={
+            JSON.stringify(errors) !== '{}' || values.tableName === '' || Object.keys(tables).includes(values.tableName)
+          }
         />
       </mui.Box>
     </Modal>
