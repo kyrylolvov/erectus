@@ -18,6 +18,12 @@ export const text: CSSWithTheme = () => ({
   width: '100%',
 });
 
+export const columnIcon: CSSWithTheme = () => ({
+  color: 'var(--secondary-text-color)',
+  marginTop: '2px',
+  width: '18px',
+});
+
 export const iconMore: CSSWithTheme = () => ({
   cursor: 'pointer',
   color: 'var(--secondary-text-color)',

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import * as css from './css';
 import { GenericObject, saveTables } from '../../utils/localStorage';
 import EmptyContainer from '../../components/EmptyContainer';
+import ListItem from '../../components/ListItem';
 
 interface TablePageProps {
   tables: GenericObject;
@@ -37,7 +38,19 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
         )}
       </mui.Box>
 
-      {!tables[tableId!] && (
+      {tables[tableId!] ? (
+        <mui.Box css={css.tableList}>
+          {Object.keys(tables[tableId!].columns).map((key) => (
+            <ListItem
+              key={key}
+              text={key}
+              setTables={setTables}
+              type="column"
+              isPrimaryKey={tables[tableId!].columns[key].primaryKey}
+            />
+          ))}
+        </mui.Box>
+      ) : (
         <EmptyContainer
           title="Table doesn't exist"
           text={"You don't have a table with specified name, please create it on the main page"}
