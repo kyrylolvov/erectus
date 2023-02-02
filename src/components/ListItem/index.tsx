@@ -6,14 +6,25 @@ import { useNavigate } from 'react-router-dom';
 import * as css from './css';
 import { GenericObject } from '../../utils/localStorage';
 
-interface ListItemProps {
+interface IListItem {
   text: string;
-  type: 'table' | 'column';
-  isPrimaryKey?: boolean;
   setTables: React.Dispatch<GenericObject>;
 }
+interface IColumnItemProps extends IListItem {
+  type: 'column';
+  isPrimaryKey: boolean;
+  currentTable: string;
+}
 
-const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, setTables }) => {
+interface ITableItemProps extends IListItem {
+  type: 'table';
+  isPrimaryKey?: boolean;
+  currentTable?: string;
+}
+
+type ListItemProps = IColumnItemProps | ITableItemProps;
+
+const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, currentTable, setTables }) => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = React.useState<SVGSVGElement | null>(null);
@@ -21,6 +32,14 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, setTables
   const deleteTable = () => {
     setTables((prev: GenericObject) => {
       prev[text] = undefined;
+      return JSON.parse(JSON.stringify(prev));
+    });
+    setAnchorEl(null);
+  };
+
+  const deleteColumn = () => {
+    setTables((prev: GenericObject) => {
+      prev[currentTable!].columns[text] = undefined;
       return JSON.parse(JSON.stringify(prev));
     });
     setAnchorEl(null);
@@ -67,9 +86,10 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, setTables
         }}
       >
         <mui.Typography
-          css={css.deleteTable}
+          css={css.deleteTable(type === 'column' && isPrimaryKey)}
           onClick={() => {
             if (type === 'table') deleteTable();
+            else if (type === 'column' && !isPrimaryKey) deleteColumn();
           }}
         >
           {type === 'table' ? 'Delete Table' : 'Delete Field'}

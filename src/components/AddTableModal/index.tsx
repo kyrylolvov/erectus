@@ -3,6 +3,7 @@ import * as mui from '@mui/material';
 import Input from '@mui/joy/Input';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 import Modal from '../Modal';
 import * as css from './css';
 import Button from '../Button';
@@ -12,7 +13,7 @@ import { ColumnType, variableNameRegex } from '../../utils/columns';
 interface AddTableModalProps {
   open: boolean;
   onClose: () => void;
-  setTables: React.Dispatch<React.SetStateAction<{}>>;
+  setTables: React.Dispatch<React.SetStateAction<GenericObject>>;
   tables: GenericObject;
 }
 
@@ -23,6 +24,8 @@ interface AddTableFormValues {
 }
 
 const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables, tables }) => {
+  const navigate = useNavigate();
+
   const initialValues = useMemo<AddTableFormValues>(
     () => ({
       tableName: '',
@@ -55,6 +58,7 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
           },
         },
       }));
+      navigate(`/tables/${tableName}`);
       onClose();
     },
   });
@@ -109,7 +113,7 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
 
       <mui.Box sx={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
         <Button
-          text="Continue"
+          text="Submit"
           onClick={() => handleSubmit()}
           disabled={
             JSON.stringify(errors) !== '{}' || values.tableName === '' || Object.keys(tables).includes(values.tableName)

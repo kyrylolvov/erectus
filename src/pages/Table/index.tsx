@@ -6,6 +6,7 @@ import * as css from './css';
 import { GenericObject, saveTables } from '../../utils/localStorage';
 import EmptyContainer from '../../components/EmptyContainer';
 import ListItem from '../../components/ListItem';
+import AddColumnModal from '../../components/AddColumnModal';
 
 interface TablePageProps {
   tables: GenericObject;
@@ -46,6 +47,7 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
               text={key}
               setTables={setTables}
               type="column"
+              currentTable={tableId!}
               isPrimaryKey={tables[tableId!].columns[key].primaryKey}
             />
           ))}
@@ -58,6 +60,14 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
           buttonAction={() => navigate('/')}
         />
       )}
+
+      <AddColumnModal
+        currentTable={tableId}
+        tables={tables}
+        setTables={setTables}
+        open={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
     </mui.Box>
   );
 };

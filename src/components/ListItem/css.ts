@@ -34,8 +34,10 @@ export const iconMore: CSSWithTheme = () => ({
   },
 });
 
-export const deleteTable: CSSWithTheme = () => ({
-  color: '#D15B6B',
-  fontSize: '14px',
-  cursor: 'pointer',
-});
+export const deleteTable =
+  (disabled: boolean): CSSWithTheme =>
+  () => ({
+    color: disabled ? '#666670' : '#D15B6B',
+    fontSize: '14px',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+  });
