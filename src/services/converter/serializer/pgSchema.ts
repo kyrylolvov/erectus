@@ -1,83 +1,64 @@
-import {
-  any,
-  boolean,
-  string,
-  enum as enumType,
-  TypeOf,
-  object,
-  record,
-  literal,
-  preprocess,
-} from "zod";
-import { isAlphaNumeric } from "../utils/AlphaNumeric";
-import { isFirstLetter } from "../utils/IsFirstLetter";
+import { any, boolean, string, enum as enumType, TypeOf, object, record, literal, preprocess } from 'zod';
+import { isAlphaNumeric } from '../utils/AlphaNumeric';
+import { isFirstLetter } from '../utils/IsFirstLetter';
 
 const fkActions = ['cascade', 'restrict', 'no action', 'set null', 'set default'] as const;
 const columnTypes = [
-  "smallint",
-  "integer",
-  "bigint",
-  "boolean",
-  "text",
-  "varchar",
-  "serial",
-  "bigserial",
-  "decimal",
-  "numeric",
-  "json",
-  "jsonb",
-  "time",
-  "timestamp",
-  "date",
-  "doublePrecision",
+  'smallint',
+  'integer',
+  'bigint',
+  'boolean',
+  'text',
+  'varchar',
+  'serial',
+  'bigserial',
+  'decimal',
+  'numeric',
+  'json',
+  'jsonb',
+  'time',
+  'timestamp',
+  'date',
+  'doublePrecision',
 ] as const;
 
-const isValidKey = (value: any) => {
-  if (!value || typeof value !== 'string') return undefined;
-  const trimmed = value.trim();
-  const isValid = isAlphaNumeric(trimmed);
-  const isFirstCharLetter = isFirstLetter(trimmed);
-  if (!isValid || !isFirstCharLetter) return undefined;
-  return trimmed;
-};
+const isValidKeyName = preprocess(
+  (value) => {
+    if (!value || typeof value !== 'string') return undefined;
+    const trimmed = value.trim();
+    const isValid = isAlphaNumeric(trimmed);
+    const isFirstCharLetter = isFirstLetter(trimmed);
+    if (!isValid || !isFirstCharLetter) return undefined;
+    return trimmed;
+  },
+  string()
+    .min(1)
+    .transform((val) => val.toLowerCase())
+);
 
 const enumSchema = object({
   name: string(),
-  values: record(
-    preprocess(
-      (value) => isValidKey(value),
-      string().min(1),
-    ),
-    string()),
+  values: record(isValidKeyName, string()),
 }).strict();
 
 const index = object({
-  name: preprocess(
-    (value) => isValidKey(value),
-    string().min(1),
-  ),
+  name: isValidKeyName,
   columns: string().array(),
   isUnique: boolean(),
 }).strict();
 
 const fk = object({
-  name: preprocess(
-    (value) => isValidKey(value),
-    string().min(1),
-  ),
-  tableFrom: string(),
+  name: isValidKeyName,
+  tableFrom: isValidKeyName,
   columnsFrom: string().array(),
-  tableTo: string(),
+  tableTo: isValidKeyName,
   columnsTo: string().array(),
   onUpdate: enumType(fkActions).optional(),
   onDelete: enumType(fkActions).optional(),
 }).strict();
 
 const column = object({
-  name: preprocess(
-    (value) => isValidKey(value),
-    string().min(1),
-  ),
+  name: isValidKeyName,
   type: enumType(columnTypes),
   primaryKey: boolean(),
   notNull: boolean(),
@@ -85,61 +66,19 @@ const column = object({
 }).strict();
 
 const table = object({
-  name: preprocess(
-    (value) => isValidKey(value),
-    string().min(1),
-  ),
-  schema: preprocess(
-    (value) => isValidKey(value),
-    string().min(1),
-  ),
-  columns: record(
-    preprocess(
-      (value) => isValidKey(value),
-      string().min(1),
-    ),
-    column,
-  ),
-  indexes: record(
-    preprocess(
-      (value) => isValidKey(value),
-      string().min(1),
-    ),
-    index,
-  ),
-  foreignKeys: record(
-    preprocess(
-      (value) => isValidKey(value),
-      string().min(1),
-    ),
-    fk,
-  ),
+  name: isValidKeyName,
+  schema: isValidKeyName,
+  columns: record(isValidKeyName, column),
+  indexes: record(isValidKeyName, index),
+  foreignKeys: record(isValidKeyName, fk),
 }).strict();
 
 export const pgSchemaInternal = object({
-  version: literal("4"),
-  dialect: enumType(["pg"]),
-  tables: record(
-    preprocess(
-      (value) => isValidKey(value),
-      string().min(1),
-    ),
-    table,
-  ),
-  enums: record(
-    preprocess(
-      (value) => isValidKey(value),
-      string().min(1),
-    ),
-    enumSchema,
-  ),
-  schemas: record(
-    preprocess(
-      (value) => isValidKey(value),
-      string().min(1),
-    ),
-    string(),
-  ),
+  version: literal('4'),
+  dialect: enumType(['pg']),
+  tables: record(isValidKeyName, table),
+  enums: record(isValidKeyName, enumSchema),
+  schemas: record(isValidKeyName, isValidKeyName),
 });
 
 export const pgSchema = pgSchemaInternal;
