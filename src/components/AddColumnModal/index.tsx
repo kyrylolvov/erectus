@@ -53,6 +53,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
       setTables((prev) => ({
         ...prev,
         [currentTable!]: {
+          ...prev[currentTable!],
           columns: {
             ...prev[currentTable!].columns,
             [values.columnName]: {
