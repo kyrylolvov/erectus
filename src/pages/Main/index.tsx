@@ -65,8 +65,8 @@ const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
       ) : (
         <>
           <mui.Box css={css.tableList}>
-            {Object.keys(tables).map((key) => (
-              <ListItem key={key} setTables={setTables} text={key} type="table" />
+            {Object.keys(tables).map((tableName) => (
+              <ListItem key={tableName} setTables={setTables} text={tableName} type="table" />
             ))}
           </mui.Box>
           <mui.Box sx={{ marginTop: '24px' }}>
@@ -75,12 +75,7 @@ const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
         </>
       )}
 
-      <AddTableModal
-        tables={tables}
-        setTables={setTables}
-        open={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      />
+      <AddTableModal tables={tables} setTables={setTables} open={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
     </mui.Box>
   );
 };

@@ -27,7 +27,7 @@ export const addButton: CSSWithTheme = () => ({
 });
 
 export const tableList: CSSWithTheme = () => ({
-  marginTop: '48px',
+  marginTop: '36px',
   display: 'grid',
   gap: '16px',
 });

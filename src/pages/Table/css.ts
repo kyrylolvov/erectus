@@ -36,8 +36,25 @@ export const addButton: CSSWithTheme = () => ({
   },
 });
 
+export const popoverItem: CSSWithTheme = () => ({
+  color: '#CBD1D7',
+  fontSize: '14px',
+  cursor: 'pointer',
+
+  ':hover': {
+    color: 'var(--cta-button-color)',
+  },
+});
+
+export const tableListTitle: CSSWithTheme = () => ({
+  margin: '36px 0 8px 0',
+  fontSize: '14px',
+  color: '#666670',
+  fontWeight: 600,
+  textTransform: 'uppercase',
+});
+
 export const tableList: CSSWithTheme = () => ({
-  marginTop: '48px',
   display: 'grid',
   gap: '16px',
 });

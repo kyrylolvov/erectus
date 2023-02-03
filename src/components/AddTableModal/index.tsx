@@ -8,7 +8,7 @@ import Modal from '../Modal';
 import * as css from './css';
 import Button from '../Button';
 import { GenericObject } from '../../utils/localStorage';
-import { ColumnType, variableNameRegex } from '../../utils/columns';
+import { ColumnType, variableNameRegex, variableTypingValidation } from '../../utils/columns';
 
 interface AddTableModalProps {
   open: boolean;
@@ -40,7 +40,7 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
     primaryKeyName: yup.string().required("Field can't be empty").matches(variableNameRegex),
   });
 
-  const { values, errors, handleSubmit, handleChange, setFieldValue, resetForm } = useFormik({
+  const { values, errors, handleSubmit, setFieldValue, resetForm } = useFormik({
     initialValues,
     validationSchema,
     validateOnChange: true,
@@ -78,8 +78,9 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
         <mui.Typography css={css.inputLabel}>Table Name</mui.Typography>
         <Input
           value={values.tableName}
-          onChange={handleChange}
-          id="tableName"
+          onChange={(e) => {
+            setFieldValue('tableName', variableTypingValidation(e.target.value));
+          }}
           css={css.input}
           size="lg"
           placeholder="A unique table name"
@@ -93,8 +94,9 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
           <mui.Typography css={css.inputLabel}>Primary Key Name</mui.Typography>
           <Input
             value={values.primaryKeyName}
-            onChange={handleChange}
-            id="primaryKeyName"
+            onChange={(e) => {
+              setFieldValue('primaryKeyName', variableTypingValidation(e.target.value));
+            }}
             css={css.input}
             size="lg"
             placeholder="A unique column name"
@@ -105,7 +107,6 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
           <mui.Select
             value={values.primaryKeyType}
             onChange={(e) => setFieldValue('primaryKeyType', e.target.value)}
-            id="primaryKeyType"
             defaultValue="int"
             css={css.select}
           >
@@ -119,9 +120,7 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
         <Button
           text="Submit"
           onClick={() => handleSubmit()}
-          disabled={
-            JSON.stringify(errors) !== '{}' || values.tableName === '' || Object.keys(tables).includes(values.tableName)
-          }
+          disabled={JSON.stringify(errors) !== '{}' || values.tableName === '' || Object.keys(tables).includes(values.tableName)}
         />
       </mui.Box>
     </Modal>

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
+import React, { useState } from 'react';
 import * as mui from '@mui/material';
 import * as muiIcons from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -13,21 +13,30 @@ interface IListItem {
 interface IColumnItemProps extends IListItem {
   type: 'column';
   isPrimaryKey: boolean;
+  isUnique?: boolean;
   currentTable: string;
 }
 
 interface ITableItemProps extends IListItem {
   type: 'table';
   isPrimaryKey?: boolean;
+  isUnique?: boolean;
   currentTable?: string;
 }
 
-type ListItemProps = IColumnItemProps | ITableItemProps;
+interface IIndexItemProps extends IListItem {
+  type: 'index';
+  isPrimaryKey?: boolean;
+  isUnique: boolean;
+  currentTable: string;
+}
 
-const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, currentTable, setTables }) => {
+type ListItemProps = IColumnItemProps | ITableItemProps | IIndexItemProps;
+
+const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isUnique, currentTable, setTables }) => {
   const navigate = useNavigate();
 
-  const [anchorEl, setAnchorEl] = React.useState<SVGSVGElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
 
   const deleteTable = () => {
     setTables((prev: GenericObject) => {
@@ -43,6 +52,37 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, currentTa
       return JSON.parse(JSON.stringify(prev));
     });
     setAnchorEl(null);
+  };
+
+  const deleteIndex = () => {
+    setTables((prev: GenericObject) => {
+      prev[currentTable!].indexes[text] = undefined;
+      return JSON.parse(JSON.stringify(prev));
+    });
+    setAnchorEl(null);
+  };
+
+  const renderPopoverButton = () => {
+    switch (type) {
+      case 'column':
+        return (
+          <mui.Typography css={css.deleteTable(isPrimaryKey)} onClick={deleteColumn}>
+            Delete Column
+          </mui.Typography>
+        );
+      case 'index':
+        return (
+          <mui.Typography css={css.deleteTable(false)} onClick={deleteIndex}>
+            Delete Index
+          </mui.Typography>
+        );
+      default:
+        return (
+          <mui.Typography css={css.deleteTable(false)} onClick={deleteTable}>
+            Delete Table
+          </mui.Typography>
+        );
+    }
   };
 
   return (
@@ -73,6 +113,16 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, currentTa
             )}
           </mui.Box>
         )}
+
+        {type === 'index' && (
+          <mui.Box>
+            {isUnique && (
+              <mui.Tooltip title="Unique index" placement="top">
+                <muiIcons.StarOutline css={css.columnIcon} />
+              </mui.Tooltip>
+            )}
+          </mui.Box>
+        )}
       </mui.Box>
       <muiIcons.MoreVert css={css.iconMore} onClick={(e) => setAnchorEl(e.currentTarget)} />
       <mui.Popover
@@ -85,15 +135,7 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, currentTa
           horizontal: 'left',
         }}
       >
-        <mui.Typography
-          css={css.deleteTable(type === 'column' && isPrimaryKey)}
-          onClick={() => {
-            if (type === 'table') deleteTable();
-            else if (type === 'column' && !isPrimaryKey) deleteColumn();
-          }}
-        >
-          {type === 'table' ? 'Delete Table' : 'Delete Field'}
-        </mui.Typography>
+        {renderPopoverButton()}
       </mui.Popover>
     </mui.Box>
   );
