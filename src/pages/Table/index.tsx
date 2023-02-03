@@ -7,6 +7,7 @@ import { GenericObject, saveTables } from '../../utils/localStorage';
 import EmptyContainer from '../../components/EmptyContainer';
 import ListItem from '../../components/ListItem';
 import AddColumnModal from '../../components/AddColumnModal';
+import AddIndexModal from '../../components/AddIndexModal';
 
 interface TablePageProps {
   tables: GenericObject;
@@ -17,7 +18,9 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
   const { tableId } = useParams();
   const navigate = useNavigate();
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
+  const [isAddIndexModalOpen, setIsAddIndexModalOpen] = useState(false);
 
   useEffect(() => {
     saveTables(tables);
@@ -33,24 +36,77 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
           {!!tables[tableId!] && <mui.Typography css={css.title}>{tableId}</mui.Typography>}
         </mui.Box>
         {!!tables[tableId!] && (
-          <mui.IconButton css={css.addButton} onClick={() => setIsAddModalOpen(true)}>
-            <muiIcons.Add />
-          </mui.IconButton>
+          <>
+            <mui.IconButton css={css.addButton} onClick={(e) => setAnchorEl(e.currentTarget)}>
+              <muiIcons.Add />
+            </mui.IconButton>
+            <mui.Popover
+              open={Boolean(anchorEl)}
+              id="delete-table-popover"
+              onClose={() => setAnchorEl(null)}
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+            >
+              <mui.Typography
+                css={css.popoverItem}
+                onClick={() => {
+                  setIsAddColumnModalOpen(true);
+                  setAnchorEl(null);
+                }}
+              >
+                Add column
+              </mui.Typography>
+              <mui.Typography
+                sx={{ marginTop: '4px' }}
+                css={css.popoverItem}
+                onClick={() => {
+                  setIsAddIndexModalOpen(true);
+                  setAnchorEl(null);
+                }}
+              >
+                Add index
+              </mui.Typography>
+            </mui.Popover>
+          </>
         )}
       </mui.Box>
 
       {tables[tableId!] ? (
-        <mui.Box css={css.tableList}>
-          {Object.keys(tables[tableId!].columns).map((key) => (
-            <ListItem
-              key={key}
-              text={key}
-              setTables={setTables}
-              type="column"
-              currentTable={tableId!}
-              isPrimaryKey={tables[tableId!].columns[key].primaryKey}
-            />
-          ))}
+        <mui.Box>
+          <mui.Typography css={css.tableListTitle}>Columns</mui.Typography>
+          <mui.Box css={css.tableList}>
+            {Object.keys(tables[tableId!].columns).map((columnName) => (
+              <ListItem
+                key={columnName}
+                text={columnName}
+                setTables={setTables}
+                type="column"
+                currentTable={tableId!}
+                isPrimaryKey={tables[tableId!].columns[columnName].primaryKey}
+              />
+            ))}
+          </mui.Box>
+
+          {!!Object.keys(tables[tableId!].indexes).length && (
+            <mui.Box>
+              <mui.Typography css={css.tableListTitle}>Indexes</mui.Typography>
+              <mui.Box css={css.tableList}>
+                {Object.keys(tables[tableId!].indexes).map((indexName) => (
+                  <ListItem
+                    key={indexName}
+                    text={indexName}
+                    setTables={setTables}
+                    type="index"
+                    currentTable={tableId!}
+                    isUnique={tables[tableId!].indexes[indexName].isUnique}
+                  />
+                ))}
+              </mui.Box>
+            </mui.Box>
+          )}
         </mui.Box>
       ) : (
         <EmptyContainer
@@ -62,11 +118,19 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
       )}
 
       <AddColumnModal
-        currentTable={tableId}
+        currentTable={tableId!}
         tables={tables}
         setTables={setTables}
-        open={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        open={isAddColumnModalOpen}
+        onClose={() => setIsAddColumnModalOpen(false)}
+      />
+
+      <AddIndexModal
+        currentTable={tableId!}
+        tables={tables}
+        setTables={setTables}
+        open={isAddIndexModalOpen}
+        onClose={() => setIsAddIndexModalOpen(false)}
       />
     </mui.Box>
   );

@@ -81,7 +81,6 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
           onChange={(e) => {
             setFieldValue('tableName', variableTypingValidation(e.target.value));
           }}
-          id="tableName"
           css={css.input}
           size="lg"
           placeholder="A unique table name"
@@ -98,7 +97,6 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
             onChange={(e) => {
               setFieldValue('primaryKeyName', variableTypingValidation(e.target.value));
             }}
-            id="primaryKeyName"
             css={css.input}
             size="lg"
             placeholder="A unique column name"
@@ -109,7 +107,6 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
           <mui.Select
             value={values.primaryKeyType}
             onChange={(e) => setFieldValue('primaryKeyType', e.target.value)}
-            id="primaryKeyType"
             defaultValue="int"
             css={css.select}
           >

@@ -58,6 +58,10 @@ body {
   background-color: hsla(0, 0%, 100%, 0.15) !important;
 }
 
+.MuiTypography-root {
+  font-family: 'Inter' !important;
+}
+
 .Joy-focused {
   --Input-focusedHighlight: var(--cta-button-color) !important;
 }
