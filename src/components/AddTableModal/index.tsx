@@ -48,6 +48,8 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
       setTables((prev) => ({
         ...prev,
         [tableName]: {
+          schema: 'my_schema',
+          name: tableName,
           columns: {
             [primaryKeyName]: {
               name: primaryKeyName,
@@ -56,6 +58,8 @@ const AddTableModal: React.FC<AddTableModalProps> = ({ open, onClose, setTables,
               notNull: false,
             },
           },
+          indexes: {},
+          foreignKeys: {},
         },
       }));
       navigate(`/tables/${tableName}`);

@@ -6,6 +6,9 @@ import EmptyContainer from '../../components/EmptyContainer';
 import AddTableModal from '../../components/AddTableModal';
 import { GenericObject, saveTables } from '../../utils/localStorage';
 import ListItem from '../../components/ListItem';
+import Button from '../../components/Button';
+import { pgSchema } from '../../services/converter/serializer/pgSchema';
+import { schemaToTypeScript } from '../../services/converter/TSConverter';
 
 interface MainPageProps {
   tables: GenericObject;
@@ -18,6 +21,30 @@ const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
   useEffect(() => {
     saveTables(tables);
   }, [tables]);
+
+  const exportTables = () => {
+    const json = {
+      version: '4',
+      dialect: 'pg',
+      schemas: {
+        my_schema: 'my_schema',
+      },
+      tables,
+      enums: {},
+    };
+
+    const parsedJson = pgSchema.parse(json);
+    const typeScriptCode: string = schemaToTypeScript(parsedJson);
+
+    const file = new Blob([typeScriptCode], { type: 'text/plain' });
+
+    const a = document.createElement('a');
+    const url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = 'schema.ts';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <mui.Box css={css.container}>
@@ -36,11 +63,16 @@ const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
           buttonAction={() => setIsAddModalOpen(true)}
         />
       ) : (
-        <mui.Box css={css.tableList}>
-          {Object.keys(tables).map((key) => (
-            <ListItem key={key} setTables={setTables} text={key} type="table" />
-          ))}
-        </mui.Box>
+        <>
+          <mui.Box css={css.tableList}>
+            {Object.keys(tables).map((key) => (
+              <ListItem key={key} setTables={setTables} text={key} type="table" />
+            ))}
+          </mui.Box>
+          <mui.Box sx={{ marginTop: '24px' }}>
+            <Button text="Export as TypeScript file" onClick={exportTables} />
+          </mui.Box>
+        </>
       )}
 
       <AddTableModal

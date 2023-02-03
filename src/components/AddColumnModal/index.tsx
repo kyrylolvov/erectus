@@ -108,7 +108,9 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
             css={css.select(!values.columnType.length)}
           >
             {(Object.keys(ColumnTypeName) as Array<KeyOfColumnTypeName>).map((columnTypeName: KeyOfColumnTypeName) => (
-              <mui.MenuItem value={ColumnTypeName[columnTypeName]}>{ColumnTypeName[columnTypeName]}</mui.MenuItem>
+              <mui.MenuItem key={ColumnTypeName[columnTypeName]} value={ColumnTypeName[columnTypeName]}>
+                {ColumnTypeName[columnTypeName]}
+              </mui.MenuItem>
             ))}
           </mui.Select>
         </mui.Box>
