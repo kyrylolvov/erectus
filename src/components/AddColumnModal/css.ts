@@ -20,6 +20,7 @@ export const input: CSSWithTheme = () => ({
   marginTop: '4px',
   fontFamily: 'Inter',
   borderRadius: '6px',
+  fontSize: '14px',
   borderColor: 'var(--secondary-text-color)',
   height: '56px',
 });
@@ -31,6 +32,7 @@ export const select =
     color: isEmpty ? '#808388' : '#CAD1D8',
     maxWidth: '230px',
     width: '100%',
+    fontSize: '14px',
 
     svg: {
       color: '#CAD1D8',
@@ -44,6 +46,37 @@ export const select =
     ':hover': {
       '.MuiOutlinedInput-notchedOutline': {
         borderColor: '#CAD1D8',
+      },
+    },
+  });
+
+export const checkboxContainer =
+  (isChecked: boolean): CSSWithTheme =>
+  () => ({
+    border: '1px solid var(--secondary-text-color)',
+    height: '56px',
+    display: 'flex',
+    alignItems: 'center',
+    paddingLeft: '16px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+
+    '.MuiTypography-root': {
+      color: isChecked ? 'var(--cta-button-color) !important' : '#CAD1D8',
+      fontSize: '14px',
+    },
+
+    '.MuiCheckbox-root': {
+      color: isChecked ? 'var(--cta-button-color) !important' : '#666671',
+      transition: 'all 0.2s',
+    },
+
+    ':hover': {
+      borderColor: '#494F57',
+      background: '#171B21',
+
+      '.MuiCheckbox-root': {
+        color: 'var(--cta-button-color) !important',
       },
     },
   });

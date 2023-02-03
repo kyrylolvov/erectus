@@ -21,6 +21,7 @@ interface AddColumnModalValues {
   columnName: string;
   columnType: ColumnTypeName | '';
   columnLength: number | '';
+  columnIsNullable: boolean;
 }
 
 const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTables, tables, currentTable }) => {
@@ -29,6 +30,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
       columnName: '',
       columnType: '',
       columnLength: '',
+      columnIsNullable: true,
     }),
     [open]
   );
@@ -40,6 +42,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
       is: ColumnTypeName.String,
       then: yup.number().required("Field can't be empty"),
     }),
+    columnIsNullable: yup.boolean(),
   });
 
   const { values, errors, handleSubmit, handleChange, setFieldValue, resetForm } = useFormik({
@@ -59,7 +62,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
                   ? `${ColumnType[values.columnType as ColumnTypeName]}(${values.columnLength})`
                   : ColumnType[values.columnType as ColumnTypeName],
               primaryKey: false,
-              notNull: true,
+              notNull: values.columnIsNullable,
             },
           },
         },
@@ -92,7 +95,10 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
           <mui.Typography css={css.inputLabel}>Column Type</mui.Typography>
           <mui.Select
             value={values.columnType}
-            onChange={(e) => setFieldValue('columnType', e.target.value)}
+            onChange={(e) => {
+              setFieldValue('columnType', e.target.value);
+              setFieldValue('columnLength', '');
+            }}
             displayEmpty
             id="primaryKeyType"
             renderValue={(selected) => selected || 'Choose a column type'}
@@ -118,6 +124,15 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
             disabled={values.columnType !== ColumnTypeName.String}
             placeholder={values.columnType === ColumnTypeName.String ? '255' : 'Not available for this type'}
           />
+        </mui.Box>
+      </mui.Box>
+
+      <mui.Box css={css.twoColumnContainer}>
+        <mui.Box
+          css={css.checkboxContainer(values.columnIsNullable)}
+          onClick={() => setFieldValue('columnIsNullable', !values.columnIsNullable)}
+        >
+          <mui.FormControlLabel control={<mui.Checkbox checked={values.columnIsNullable} />} label="Allow NULL value" />
         </mui.Box>
       </mui.Box>
 
