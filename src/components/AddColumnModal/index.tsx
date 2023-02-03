@@ -7,7 +7,7 @@ import Modal from '../Modal';
 import * as css from './css';
 import Button from '../Button';
 import { GenericObject } from '../../utils/localStorage';
-import { ColumnType, ColumnTypeName, KeyOfColumnTypeName, variableNameRegex } from '../../utils/columns';
+import { ColumnType, ColumnTypeName, KeyOfColumnTypeName, variableNameRegex, variableTypingValidation } from '../../utils/columns';
 
 interface AddColumnModalProps {
   open: boolean;
@@ -58,12 +58,9 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
             ...prev[currentTable!].columns,
             [values.columnName]: {
               name: values.columnName,
-              type:
-                values.columnType === ColumnTypeName.String
-                  ? `${ColumnType[values.columnType as ColumnTypeName]}(${values.columnLength})`
-                  : ColumnType[values.columnType as ColumnTypeName],
+              type: ColumnType[values.columnType as ColumnTypeName],
               primaryKey: false,
-              notNull: values.columnIsNullable,
+              notNull: !values.columnIsNullable,
             },
           },
         },
@@ -83,7 +80,9 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
         <mui.Typography css={css.inputLabel}>Column Name</mui.Typography>
         <Input
           value={values.columnName}
-          onChange={handleChange}
+          onChange={(e) => {
+            setFieldValue('columnName', variableTypingValidation(e.target.value));
+          }}
           id="columnName"
           css={css.input}
           size="lg"
@@ -120,7 +119,9 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
           <mui.Typography css={css.inputLabel}>Column Length</mui.Typography>
           <Input
             value={values.columnLength ?? ''}
-            onChange={handleChange}
+            onChange={(e) => {
+              setFieldValue('columnLength', e.target.value.replace(/[^0-9]/gi, ''));
+            }}
             id="columnLength"
             css={css.input}
             size="lg"
@@ -131,10 +132,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
       </mui.Box>
 
       <mui.Box css={css.twoColumnContainer}>
-        <mui.Box
-          css={css.checkboxContainer(values.columnIsNullable)}
-          onClick={() => setFieldValue('columnIsNullable', !values.columnIsNullable)}
-        >
+        <mui.Box css={css.checkboxContainer(values.columnIsNullable)} onClick={() => setFieldValue('columnIsNullable', !values.columnIsNullable)}>
           <mui.FormControlLabel control={<mui.Checkbox checked={values.columnIsNullable} />} label="Allow NULL value" />
         </mui.Box>
       </mui.Box>
@@ -144,9 +142,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
           text="Submit"
           onClick={() => handleSubmit()}
           disabled={
-            JSON.stringify(errors) !== '{}' ||
-            values.columnName === '' ||
-            Object.keys(tables[currentTable!].columns).includes(values.columnName)
+            JSON.stringify(errors) !== '{}' || values.columnName === '' || Object.keys(tables[currentTable!].columns).includes(values.columnName)
           }
         />
       </mui.Box>

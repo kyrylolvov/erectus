@@ -33,6 +33,11 @@ export enum ColumnTypeName {
   Jsonb = 'JSONB',
 }
 
+export const variableTypingValidation = (value: string): string => {
+  const validatedValue = value.length > 1 ? value.replace(' ', '_').replace(/[^a-zA-Z0-9_]/gi, '') : value.replace(/[^A-Za-z]/gi, '');
+  return validatedValue;
+};
+
 export type KeyOfColumnType = keyof typeof ColumnType;
 export type KeyOfColumnTypeName = keyof typeof ColumnTypeName;
 

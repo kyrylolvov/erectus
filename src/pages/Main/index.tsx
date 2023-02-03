@@ -75,12 +75,7 @@ const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
         </>
       )}
 
-      <AddTableModal
-        tables={tables}
-        setTables={setTables}
-        open={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-      />
+      <AddTableModal tables={tables} setTables={setTables} open={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} />
     </mui.Box>
   );
 };
