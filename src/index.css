@@ -83,7 +83,7 @@ body {
   background: #22262d;
 }
 
-.MuiPaper-root .MuiList-root li:last-child {
+.MuiPaper-root .MuiList-root li:not(:first-child) {
   margin-top: 8px;
 }
 

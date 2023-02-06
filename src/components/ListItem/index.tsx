@@ -13,6 +13,8 @@ interface IListItem {
 interface IColumnItemProps extends IListItem {
   type: 'column';
   isPrimaryKey: boolean;
+  isInteger: boolean;
+  openAddKeyModal: (column: string) => void;
   isUnique?: boolean;
   currentTable: string;
 }
@@ -20,6 +22,8 @@ interface IColumnItemProps extends IListItem {
 interface ITableItemProps extends IListItem {
   type: 'table';
   isPrimaryKey?: boolean;
+  isInteger?: boolean;
+  openAddKeyModal?: (column: string) => void;
   isUnique?: boolean;
   currentTable?: string;
 }
@@ -27,13 +31,15 @@ interface ITableItemProps extends IListItem {
 interface IIndexItemProps extends IListItem {
   type: 'index';
   isPrimaryKey?: boolean;
+  isInteger?: boolean;
+  openAddKeyModal?: (column: string) => void;
   isUnique: boolean;
   currentTable: string;
 }
 
 type ListItemProps = IColumnItemProps | ITableItemProps | IIndexItemProps;
 
-const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isUnique, currentTable, setTables }) => {
+const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger, isUnique, currentTable, openAddKeyModal, setTables }) => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
@@ -66,9 +72,14 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isUnique,
     switch (type) {
       case 'column':
         return (
-          <mui.Typography css={css.deleteTable(isPrimaryKey)} onClick={deleteColumn}>
-            Delete Column
-          </mui.Typography>
+          <>
+            <mui.Typography css={css.deleteTable(isPrimaryKey)} onClick={deleteColumn}>
+              Delete Column
+            </mui.Typography>
+            <mui.Typography css={css.popoverItem(!isInteger)} onClick={() => (isInteger ? openAddKeyModal(text) : {})} sx={{ marginTop: '4px' }}>
+              Add Foreign Key
+            </mui.Typography>
+          </>
         );
       case 'index':
         return (

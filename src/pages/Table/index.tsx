@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import * as mui from '@mui/material';
 import * as muiIcons from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as css from './css';
-import { GenericObject, saveTables } from '../../utils/localStorage';
+import { GenericObject } from '../../utils/localStorage';
 import EmptyContainer from '../../components/EmptyContainer';
 import ListItem from '../../components/ListItem';
 import AddColumnModal from '../../components/AddColumnModal';
 import AddIndexModal from '../../components/AddIndexModal';
+import AddForeignKeyModal from '../../components/AddForeignKeyModal';
 
 interface TablePageProps {
   tables: GenericObject;
@@ -22,11 +23,20 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
 
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const [isAddIndexModalOpen, setIsAddIndexModalOpen] = useState(false);
-  const [isAddKeyModalOpen, setIsAddKeyModalOpen] = useState(false);
+  const [addForeinKeyModal, setAddForeignKeyModal] = useState<{
+    open: boolean;
+    collumnFrom: string;
+  }>({
+    open: false,
+    collumnFrom: '',
+  });
 
-  useEffect(() => {
-    saveTables(tables);
-  }, [tables]);
+  const openAddKeyModal = (column: string) => {
+    setAddForeignKeyModal({
+      open: true,
+      collumnFrom: column,
+    });
+  };
 
   return (
     <mui.Box css={css.container}>
@@ -71,16 +81,6 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
               >
                 Add index
               </mui.Typography>
-              <mui.Typography
-                sx={{ marginTop: '4px' }}
-                css={css.popoverItem}
-                onClick={() => {
-                  setIsAddKeyModalOpen(true);
-                  setAnchorEl(null);
-                }}
-              >
-                Add foreign key
-              </mui.Typography>
             </mui.Popover>
           </>
         )}
@@ -98,6 +98,8 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
                 type="column"
                 currentTable={tableId!}
                 isPrimaryKey={tables[tableId!].columns[columnName].primaryKey}
+                isInteger={['integer', 'bigint'].includes(tables[tableId!].columns[columnName].type)}
+                openAddKeyModal={openAddKeyModal}
               />
             ))}
           </mui.Box>
@@ -143,6 +145,15 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
         setTables={setTables}
         open={isAddIndexModalOpen}
         onClose={() => setIsAddIndexModalOpen(false)}
+      />
+
+      <AddForeignKeyModal
+        currentTable={tableId!}
+        currentColumn={addForeinKeyModal.collumnFrom}
+        tables={tables}
+        open={addForeinKeyModal.open}
+        setTables={setTables}
+        onClose={() => setAddForeignKeyModal({ open: false, collumnFrom: '' })}
       />
     </mui.Box>
   );
