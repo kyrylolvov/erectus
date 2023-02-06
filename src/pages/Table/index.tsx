@@ -19,8 +19,10 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const [isAddIndexModalOpen, setIsAddIndexModalOpen] = useState(false);
+  const [isAddKeyModalOpen, setIsAddKeyModalOpen] = useState(false);
 
   useEffect(() => {
     saveTables(tables);
@@ -68,6 +70,16 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
                 }}
               >
                 Add index
+              </mui.Typography>
+              <mui.Typography
+                sx={{ marginTop: '4px' }}
+                css={css.popoverItem}
+                onClick={() => {
+                  setIsAddKeyModalOpen(true);
+                  setAnchorEl(null);
+                }}
+              >
+                Add foreign key
               </mui.Typography>
             </mui.Popover>
           </>

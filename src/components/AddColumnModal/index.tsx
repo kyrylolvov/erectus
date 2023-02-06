@@ -20,7 +20,7 @@ interface AddColumnModalProps {
 interface AddColumnModalValues {
   columnName: string;
   columnType: ColumnTypeName | '';
-  columnLength: number | '';
+  // columnLength: number | '';
   columnIsNullable: boolean;
 }
 
@@ -29,7 +29,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
     () => ({
       columnName: '',
       columnType: '',
-      columnLength: '',
+      // columnLength: '',
       columnIsNullable: true,
     }),
     [open]
@@ -38,10 +38,10 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
   const validationSchema = yup.object({
     columnName: yup.string().required("Field can't be empty").matches(variableNameRegex),
     columnType: yup.string().required("Field can't be empty"),
-    columnLength: yup.number().when('columnType', {
-      is: ColumnTypeName.String,
-      then: yup.number().required("Field can't be empty"),
-    }),
+    // columnLength: yup.number().when('columnType', {
+    //   is: ColumnTypeName.String,
+    //   then: yup.number().required("Field can't be empty"),
+    // }),
     columnIsNullable: yup.boolean(),
   });
 
@@ -114,7 +114,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
           </mui.Select>
         </mui.Box>
 
-        <mui.Box>
+        {/* <mui.Box>
           <mui.Typography css={css.inputLabel}>Column Length</mui.Typography>
           <Input
             value={values.columnLength ?? ''}
@@ -126,10 +126,7 @@ const AddColumnModal: React.FC<AddColumnModalProps> = ({ open, onClose, setTable
             disabled={values.columnType !== ColumnTypeName.String}
             placeholder={values.columnType === ColumnTypeName.String ? '255' : 'Not available for this type'}
           />
-        </mui.Box>
-      </mui.Box>
-
-      <mui.Box css={css.twoColumnContainer}>
+        </mui.Box> */}
         <mui.Box css={css.checkboxContainer(values.columnIsNullable)} onClick={() => setFieldValue('columnIsNullable', !values.columnIsNullable)}>
           <mui.FormControlLabel
             sx={{ pointerEvents: 'none' }}
