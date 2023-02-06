@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import * as mui from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -30,41 +30,54 @@ interface AddForeignKeyModalValues {
 }
 
 const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, setTables, tables, currentTable, currentColumn }) => {
-  const initialValues: AddForeignKeyModalValues = {
-    name: '',
-    tableFrom: currentTable,
-    columnsFrom: currentColumn,
-    tableTo: '',
-    columnsTo: '',
-    onUpdate: 'no action',
-    onDelete: 'no action',
-  };
+  const initialValues = useMemo<AddForeignKeyModalValues>(
+    () => ({
+      name: '',
+      tableFrom: currentTable,
+      columnsFrom: currentColumn,
+      tableTo: '',
+      columnsTo: '',
+      onUpdate: 'no action',
+      onDelete: 'no action',
+    }),
+    [open]
+  );
 
   const validationSchema = yup.object({
-    columnNames: yup.array().of(yup.string()),
+    name: yup.string().required("Field can't be empty"),
+    tableFrom: yup.string().required("Field can't be empty"),
+    columnsFrom: yup.string().required("Field can't be empty"),
+    tableTo: yup.string().required("Field can't be empty"),
+    columnsTo: yup.string().required("Field can't be empty"),
+    onUpdate: yup.string().required("Field can't be empty"),
+    onDelete: yup.string().required("Field can't be empty"),
   });
 
   const { values, errors, handleSubmit, setFieldValue, resetForm } = useFormik({
     initialValues,
     validationSchema,
     validateOnChange: true,
+    enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(values);
-      // setTables((prev) => ({
-      //   ...prev,
-      //   [currentTable!]: {
-      //     ...prev[currentTable!],
-      //     indexes: {
-      //       ...prev[currentTable!].indexes,
-      //       [values.name]: {
-      //         name: values.name,
-      //         columns: values.columns,
-      //         isUnique: values.isUnique,
-      //       },
-      //     },
-      //   },
-      // }));
-      // onClose();
+      setTables((prev) => ({
+        ...prev,
+        [currentTable!]: {
+          ...prev[currentTable!],
+          foreignKeys: {
+            ...prev[currentTable!].foreignKeys,
+            [values.name]: {
+              name: values.name,
+              tableFrom: values.tableFrom,
+              columnsFrom: values.columnsFrom,
+              tableTo: values.tableTo,
+              columnsTo: values.columnsTo,
+              onUpdate: values.onUpdate,
+              onDelete: values.onDelete,
+            },
+          },
+        },
+      }));
+      onClose();
     },
   });
 
@@ -72,7 +85,9 @@ const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, 
     resetForm();
   }, [open]);
 
-  console.log(values);
+  useEffect(() => {
+    setFieldValue('name', `${values.tableFrom}_${values.columnsFrom}_${values.tableTo}_${values.columnsTo}_fk`);
+  }, [values.columnsTo]);
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -82,7 +97,7 @@ const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, 
           label="Related table"
           value={values.tableTo}
           onChange={(e) => setFieldValue('tableTo', e.target.value)}
-          renderValue={(selected) => (selected.length ? selected : 'Choose a related table')}
+          renderValue={(selected) => renderSelectValue(!values.tableTo, String(selected), 'Choose a related table')}
         >
           {Object.keys(tables)
             .filter((table) => table !== currentTable)
@@ -100,7 +115,9 @@ const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, 
           label="Related column"
           value={values.columnsTo}
           onChange={(e) => setFieldValue('columnsTo', e.target.value)}
-          renderValue={(selected) => (selected.length ? selected : values.tableTo ? 'Choose a related column' : 'Choose a related table first')}
+          renderValue={(selected) =>
+            renderSelectValue(!values.columnsTo, String(selected), 'Choose a related column', !values.tableTo, 'Choose a related table first')
+          }
         >
           {values.tableTo &&
             Object.keys(tables[values.tableTo].columns)
@@ -114,28 +131,6 @@ const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, 
       </mui.Box>
 
       <mui.Box css={css.twoColumnContainer}>
-        <Select
-          disabled={!values.tableTo}
-          label="On Update"
-          value={values.onUpdate}
-          onChange={(e) => setFieldValue('onUpdate', e.target.value)}
-          renderValue={(selected) =>
-            renderSelectValue(
-              !values.onUpdate,
-              foreignKeyActions.find((x) => x.value === selected)?.name ?? '',
-              'Choose an on update action',
-              !values.tableTo,
-              'Choose a related table first'
-            )
-          }
-        >
-          {foreignKeyActions.map((action) => (
-            <mui.MenuItem key={`onupdate-${action.value}`} value={action.value}>
-              {action.name}
-            </mui.MenuItem>
-          ))}
-        </Select>
-
         <Select
           disabled={!values.tableTo}
           label="On Delete"
@@ -157,10 +152,32 @@ const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, 
             </mui.MenuItem>
           ))}
         </Select>
+
+        <Select
+          disabled={!values.tableTo}
+          label="On Update"
+          value={values.onUpdate}
+          onChange={(e) => setFieldValue('onUpdate', e.target.value)}
+          renderValue={(selected) =>
+            renderSelectValue(
+              !values.onUpdate,
+              foreignKeyActions.find((x) => x.value === selected)?.name ?? '',
+              'Choose an on update action',
+              !values.tableTo,
+              'Choose a related table first'
+            )
+          }
+        >
+          {foreignKeyActions.map((action) => (
+            <mui.MenuItem key={`onupdate-${action.value}`} value={action.value}>
+              {action.name}
+            </mui.MenuItem>
+          ))}
+        </Select>
       </mui.Box>
 
       <mui.Box sx={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
-        <Button text="Submit" onClick={() => handleSubmit()} disabled={JSON.stringify(errors) !== '{}'} />
+        <Button text="Submit" onClick={() => handleSubmit()} disabled={JSON.stringify(errors) !== '{}' || !values.tableTo} />
       </mui.Box>
     </Modal>
   );

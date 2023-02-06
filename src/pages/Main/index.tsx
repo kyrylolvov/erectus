@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import * as mui from '@mui/material';
 import * as muiIcons from '@mui/icons-material';
 import * as css from './css';
 import EmptyContainer from '../../components/EmptyContainer';
 import AddTableModal from '../../components/AddTableModal';
-import { GenericObject, saveTables } from '../../utils/localStorage';
+import { GenericObject } from '../../utils/localStorage';
 import ListItem from '../../components/ListItem';
 import Button from '../../components/Button';
 import { pgSchema } from '../../services/converter/serializer/pgSchema';
@@ -17,10 +17,6 @@ interface MainPageProps {
 
 const Main: React.FC<MainPageProps> = ({ tables, setTables }) => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  useEffect(() => {
-    saveTables(tables);
-  }, [tables]);
 
   const exportTables = () => {
     const json = {

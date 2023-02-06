@@ -38,6 +38,14 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
     });
   };
 
+  const getForeignKeySchema = (column: string) => {
+    const foreignKey = Object.keys(tables[tableId!].foreignKeys)
+      .filter((foreignKeyName) => tables[tableId!].foreignKeys[foreignKeyName].columnsFrom === column)
+      .map((foreignKeyName) => tables[tableId!].foreignKeys[foreignKeyName]);
+
+    return foreignKey.length ? `${foreignKey[0].tableTo}.${foreignKey[0].columnsTo}` : '';
+  };
+
   return (
     <mui.Box css={css.container}>
       <mui.Box css={css.header}>
@@ -99,6 +107,7 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
                 currentTable={tableId!}
                 isPrimaryKey={tables[tableId!].columns[columnName].primaryKey}
                 isInteger={['integer', 'bigint'].includes(tables[tableId!].columns[columnName].type)}
+                foreignKey={getForeignKeySchema(columnName)}
                 openAddKeyModal={openAddKeyModal}
               />
             ))}
@@ -117,6 +126,17 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
                     currentTable={tableId!}
                     isUnique={tables[tableId!].indexes[indexName].isUnique}
                   />
+                ))}
+              </mui.Box>
+            </mui.Box>
+          )}
+
+          {!!Object.keys(tables[tableId!].foreignKeys).length && (
+            <mui.Box>
+              <mui.Typography css={css.tableListTitle}>Foreign Keys</mui.Typography>
+              <mui.Box css={css.tableList}>
+                {Object.keys(tables[tableId!].foreignKeys).map((foreignKeyName) => (
+                  <ListItem key={foreignKeyName} text={foreignKeyName} setTables={setTables} type="foreignKey" currentTable={tableId!} />
                 ))}
               </mui.Box>
             </mui.Box>
