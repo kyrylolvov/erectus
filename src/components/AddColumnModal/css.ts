@@ -14,6 +14,7 @@ export const twoColumnContainer: CSSWithTheme = () => ({
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
   gap: '24px',
+  alignItems: 'flex-end',
 });
 
 export const input: CSSWithTheme = () => ({

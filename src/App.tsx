@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Main from './pages/Main';
 import Table from './pages/Table';
-import { GenericObject, loadTables } from './utils/localStorage';
+import { GenericObject, loadTables, saveTables } from './utils/localStorage';
 
 const App = () => {
   const [tables, setTables] = useState<GenericObject>(loadTables() ?? {});
+
+  useEffect(() => {
+    saveTables(tables);
+  }, [tables]);
 
   return (
     <Routes>

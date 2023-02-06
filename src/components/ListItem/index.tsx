@@ -5,35 +5,19 @@ import * as muiIcons from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import * as css from './css';
 import { GenericObject } from '../../utils/localStorage';
+import { ListItemProps } from './utils';
 
-interface IListItem {
-  text: string;
-  setTables: React.Dispatch<GenericObject>;
-}
-interface IColumnItemProps extends IListItem {
-  type: 'column';
-  isPrimaryKey: boolean;
-  isUnique?: boolean;
-  currentTable: string;
-}
-
-interface ITableItemProps extends IListItem {
-  type: 'table';
-  isPrimaryKey?: boolean;
-  isUnique?: boolean;
-  currentTable?: string;
-}
-
-interface IIndexItemProps extends IListItem {
-  type: 'index';
-  isPrimaryKey?: boolean;
-  isUnique: boolean;
-  currentTable: string;
-}
-
-type ListItemProps = IColumnItemProps | ITableItemProps | IIndexItemProps;
-
-const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isUnique, currentTable, setTables }) => {
+const ListItem: React.FC<ListItemProps> = ({
+  text,
+  type,
+  isPrimaryKey,
+  isInteger,
+  isUnique,
+  foreignKey,
+  currentTable,
+  openAddKeyModal,
+  setTables,
+}) => {
   const navigate = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
@@ -62,18 +46,41 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isUnique,
     setAnchorEl(null);
   };
 
+  const deleteForeignKey = () => {
+    setTables((prev: GenericObject) => {
+      prev[currentTable!].foreignKeys[text] = undefined;
+      return JSON.parse(JSON.stringify(prev));
+    });
+    setAnchorEl(null);
+  };
+
   const renderPopoverButton = () => {
     switch (type) {
       case 'column':
         return (
-          <mui.Typography css={css.deleteTable(isPrimaryKey)} onClick={deleteColumn}>
-            Delete Column
-          </mui.Typography>
+          <>
+            <mui.Typography css={css.deleteTable(isPrimaryKey)} onClick={deleteColumn}>
+              Delete Column
+            </mui.Typography>
+            <mui.Typography
+              css={css.popoverItem(!isInteger || !!foreignKey)}
+              onClick={() => (isInteger && !foreignKey ? openAddKeyModal(text) : {})}
+              sx={{ marginTop: '4px' }}
+            >
+              Add Foreign Key
+            </mui.Typography>
+          </>
         );
       case 'index':
         return (
           <mui.Typography css={css.deleteTable(false)} onClick={deleteIndex}>
             Delete Index
+          </mui.Typography>
+        );
+      case 'foreignKey':
+        return (
+          <mui.Typography css={css.deleteTable(false)} onClick={deleteForeignKey}>
+            Delete Foreign Key
           </mui.Typography>
         );
       default:
@@ -109,6 +116,12 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isUnique,
             {isPrimaryKey && (
               <mui.Tooltip title="Primary key" placement="top">
                 <muiIcons.VpnKeyOutlined css={css.columnIcon} />
+              </mui.Tooltip>
+            )}
+
+            {!!foreignKey && (
+              <mui.Tooltip title={`Foreign key -> ${foreignKey}`} placement="top">
+                <muiIcons.LockOutlined css={css.columnIcon} />
               </mui.Tooltip>
             )}
           </mui.Box>

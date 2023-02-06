@@ -34,6 +34,18 @@ export const iconMore: CSSWithTheme = () => ({
   },
 });
 
+export const popoverItem =
+  (disabled: boolean): CSSWithTheme =>
+  () => ({
+    color: disabled ? '#666670' : '#CBD1D7',
+    fontSize: '14px',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+
+    ':hover': {
+      color: disabled ? '#666670' : 'var(--cta-button-color)',
+    },
+  });
+
 export const deleteTable =
   (disabled: boolean): CSSWithTheme =>
   () => ({
