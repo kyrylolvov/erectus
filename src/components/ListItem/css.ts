@@ -12,6 +12,14 @@ export const container: CSSWithTheme = () => ({
   },
 });
 
+export const itemContent: CSSWithTheme = () => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  width: '100%',
+  paddingRight: '16px',
+});
+
 export const text: CSSWithTheme = () => ({
   padding: '12px 0 12px 12px',
   cursor: 'pointer',
@@ -46,8 +54,8 @@ export const popoverItem =
     },
   });
 
-export const deleteTable =
-  (disabled: boolean): CSSWithTheme =>
+export const deleteitem =
+  (disabled?: boolean): CSSWithTheme =>
   () => ({
     color: disabled ? '#666670' : '#D15B6B',
     fontSize: '14px',

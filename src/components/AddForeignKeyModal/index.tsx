@@ -29,7 +29,14 @@ interface AddForeignKeyModalValues {
   onDelete: 'cascade' | 'restrict' | 'no action' | 'set null' | 'set default';
 }
 
-const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, setTables, tables, currentTable, currentColumn }) => {
+const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({
+  open,
+  onClose,
+  setTables,
+  tables,
+  currentTable,
+  currentColumn,
+}) => {
   const initialValues = useMemo<AddForeignKeyModalValues>(
     () => ({
       name: '',
@@ -116,7 +123,13 @@ const AddForeignKeyModal: React.FC<AddForeignKeyModalProps> = ({ open, onClose, 
           value={values.columnsTo}
           onChange={(e) => setFieldValue('columnsTo', e.target.value)}
           renderValue={(selected) =>
-            renderSelectValue(!values.columnsTo, String(selected), 'Choose a related column', !values.tableTo, 'Choose a related table first')
+            renderSelectValue(
+              !values.columnsTo,
+              String(selected),
+              'Choose a related column',
+              !values.tableTo,
+              'Choose a related table first'
+            )
           }
         >
           {values.tableTo &&

@@ -4,143 +4,92 @@ import * as mui from '@mui/material';
 import * as muiIcons from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import * as css from './css';
-import { GenericObject } from '../../utils/localStorage';
 import { ListItemProps } from './utils';
+import { useStore } from '../../store';
+import { ModalState } from '../../store/types';
+import ColumnModal from '../ColumnModal';
 
-const ListItem: React.FC<ListItemProps> = ({
-  text,
-  type,
-  isPrimaryKey,
-  isInteger,
-  isUnique,
-  foreignKey,
-  currentTable,
-  openAddKeyModal,
-  setTables,
-}) => {
+const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger, isUnique, foreignKey, openAddKeyModal }) => {
   const navigate = useNavigate();
+  const { deleteTable, currentTable } = useStore((state) => state);
 
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
 
-  const deleteTable = () => {
-    setTables((prev: GenericObject) => {
-      prev[text] = undefined;
-      return JSON.parse(JSON.stringify(prev));
-    });
-    setAnchorEl(null);
-  };
+  const [columnModal, setColumnModal] = useState(ModalState.Closed);
 
-  const deleteColumn = () => {
-    setTables((prev: GenericObject) => {
-      prev[currentTable!].columns[text] = undefined;
-      return JSON.parse(JSON.stringify(prev));
-    });
-    setAnchorEl(null);
-  };
-
-  const deleteIndex = () => {
-    setTables((prev: GenericObject) => {
-      prev[currentTable!].indexes[text] = undefined;
-      return JSON.parse(JSON.stringify(prev));
-    });
-    setAnchorEl(null);
-  };
-
-  const deleteForeignKey = () => {
-    setTables((prev: GenericObject) => {
-      prev[currentTable!].foreignKeys[text] = undefined;
-      return JSON.parse(JSON.stringify(prev));
-    });
+  const deleteItem = () => {
+    switch (type) {
+      case 'table':
+      default: {
+        deleteTable(text);
+      }
+    }
     setAnchorEl(null);
   };
 
   const renderPopoverButton = () => {
     switch (type) {
-      case 'column':
-        return (
-          <>
-            <mui.Typography css={css.deleteTable(isPrimaryKey)} onClick={deleteColumn}>
-              Delete Column
-            </mui.Typography>
-            <mui.Typography
-              css={css.popoverItem(!isInteger || !!foreignKey)}
-              onClick={() => (isInteger && !foreignKey ? openAddKeyModal(text) : {})}
-              sx={{ marginTop: '4px' }}
-            >
-              Add Foreign Key
-            </mui.Typography>
-          </>
-        );
-      case 'index':
-        return (
-          <mui.Typography css={css.deleteTable(false)} onClick={deleteIndex}>
-            Delete Index
-          </mui.Typography>
-        );
-      case 'foreignKey':
-        return (
-          <mui.Typography css={css.deleteTable(false)} onClick={deleteForeignKey}>
-            Delete Foreign Key
-          </mui.Typography>
-        );
+      case 'table':
       default:
         return (
-          <mui.Typography css={css.deleteTable(false)} onClick={deleteTable}>
+          <mui.Typography css={css.deleteitem()} onClick={deleteItem}>
             Delete Table
           </mui.Typography>
         );
     }
   };
 
-  return (
-    <mui.Box css={css.container}>
-      <mui.Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '100%',
-          paddingRight: '16px',
-        }}
-      >
-        <mui.Typography
-          onClick={() => {
-            if (type === 'table') navigate(`/tables/${text}`);
-          }}
-          css={css.text}
-        >
-          {text}
-        </mui.Typography>
-        {type === 'column' && (
+  const renderItemIcons = () => {
+    switch (type) {
+      case 'column':
+        return (
           <mui.Box>
             {isPrimaryKey && (
               <mui.Tooltip title="Primary key" placement="top">
-                <muiIcons.VpnKeyOutlined css={css.columnIcon} />
+                <muiIcons.VpnKey css={css.columnIcon} />
               </mui.Tooltip>
             )}
 
             {!!foreignKey && (
               <mui.Tooltip title={`Foreign key -> ${foreignKey}`} placement="top">
-                <muiIcons.LockOutlined css={css.columnIcon} />
+                <muiIcons.VpnKeyOutlined css={css.columnIcon} />
               </mui.Tooltip>
             )}
           </mui.Box>
-        )}
-
-        {type === 'index' && (
+        );
+      case 'index':
+      default: {
+        return (
           <mui.Box>
             {isUnique && (
               <mui.Tooltip title="Unique index" placement="top">
-                <muiIcons.StarOutline css={css.columnIcon} />
+                <muiIcons.Fingerprint css={css.columnIcon} />
               </mui.Tooltip>
             )}
           </mui.Box>
-        )}
+        );
+      }
+    }
+  };
+
+  return (
+    <mui.Box css={css.container}>
+      <mui.Box css={css.itemContent}>
+        <mui.Typography
+          onClick={() => {
+            if (type === 'table') navigate(`/tables/${text}`);
+            else if (type === 'column') setColumnModal(ModalState.Edit);
+          }}
+          css={css.text}
+        >
+          {text}
+        </mui.Typography>
+        {renderItemIcons()}
       </mui.Box>
       <muiIcons.MoreVert css={css.iconMore} onClick={(e) => setAnchorEl(e.currentTarget)} />
       <mui.Popover
         open={Boolean(anchorEl)}
-        id="delete-table-popover"
+        className="item-popover"
         onClose={() => setAnchorEl(null)}
         anchorEl={anchorEl}
         anchorOrigin={{
@@ -150,6 +99,12 @@ const ListItem: React.FC<ListItemProps> = ({
       >
         {renderPopoverButton()}
       </mui.Popover>
+
+      <ColumnModal
+        open={columnModal}
+        onClose={() => setColumnModal(ModalState.Closed)}
+        column={currentTable?.columns.find((column) => column.name === text)}
+      />
     </mui.Box>
   );
 };

@@ -6,7 +6,7 @@ interface SelectProps {
   label: string;
   value: string | string[];
   onChange: (e: mui.SelectChangeEvent<any>) => void;
-  renderValue: (value: string | string[]) => React.ReactNode;
+  renderValue?: (value: string | string[]) => React.ReactNode;
   disabled?: boolean;
   multiple?: boolean;
   children: React.ReactNode;

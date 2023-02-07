@@ -1,50 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as mui from '@mui/material';
 import * as muiIcons from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as css from './css';
-import { GenericObject } from '../../utils/localStorage';
+import { ModalState } from '../../store/types';
+import { useStore } from '../../store';
 import EmptyContainer from '../../components/EmptyContainer';
 import ListItem from '../../components/ListItem';
-import AddColumnModal from '../../components/AddColumnModal';
-import AddIndexModal from '../../components/AddIndexModal';
-import AddForeignKeyModal from '../../components/AddForeignKeyModal';
+import ColumnModal from '../../components/ColumnModal';
 
-interface TablePageProps {
-  tables: GenericObject;
-  setTables: React.Dispatch<React.SetStateAction<GenericObject>>;
-}
-
-const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
+const TablePage: React.FC = () => {
   const { tableId } = useParams();
   const navigate = useNavigate();
 
+  const { currentTable, setCurrentTable } = useStore((state) => state);
+
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
-  const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
-  const [isAddIndexModalOpen, setIsAddIndexModalOpen] = useState(false);
-  const [addForeinKeyModal, setAddForeignKeyModal] = useState<{
-    open: boolean;
-    collumnFrom: string;
-  }>({
-    open: false,
-    collumnFrom: '',
-  });
+  const [columnModal, setColumnModal] = useState(ModalState.Closed);
 
-  const openAddKeyModal = (column: string) => {
-    setAddForeignKeyModal({
-      open: true,
-      collumnFrom: column,
-    });
-  };
-
-  const getForeignKeySchema = (column: string) => {
-    const foreignKey = Object.keys(tables[tableId!].foreignKeys)
-      .filter((foreignKeyName) => tables[tableId!].foreignKeys[foreignKeyName].columnsFrom === column)
-      .map((foreignKeyName) => tables[tableId!].foreignKeys[foreignKeyName]);
-
-    return foreignKey.length ? `${foreignKey[0].tableTo}.${foreignKey[0].columnsTo}` : '';
-  };
+  useEffect(() => {
+    setCurrentTable(tableId ?? '');
+  }, []);
 
   return (
     <mui.Box css={css.container}>
@@ -53,16 +30,16 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
           <mui.IconButton sx={{ marginRight: '16px' }} css={css.backButton} onClick={() => navigate('/')}>
             <muiIcons.ArrowBack />
           </mui.IconButton>
-          {!!tables[tableId!] && <mui.Typography css={css.title}>{tableId}</mui.Typography>}
+          {currentTable && <mui.Typography css={css.title}>{tableId}</mui.Typography>}
         </mui.Box>
-        {!!tables[tableId!] && (
+        {currentTable && (
           <>
             <mui.IconButton css={css.addButton} onClick={(e) => setAnchorEl(e.currentTarget)}>
               <muiIcons.Add />
             </mui.IconButton>
             <mui.Popover
               open={Boolean(anchorEl)}
-              id="delete-table-popover"
+              className="item-popover"
               onClose={() => setAnchorEl(null)}
               anchorEl={anchorEl}
               anchorOrigin={{
@@ -73,7 +50,7 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
               <mui.Typography
                 css={css.popoverItem}
                 onClick={() => {
-                  setIsAddColumnModalOpen(true);
+                  setColumnModal(ModalState.Add);
                   setAnchorEl(null);
                 }}
               >
@@ -83,7 +60,7 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
                 sx={{ marginTop: '4px' }}
                 css={css.popoverItem}
                 onClick={() => {
-                  setIsAddIndexModalOpen(true);
+                  // setIsAddIndexModalOpen(true);
                   setAnchorEl(null);
                 }}
               >
@@ -94,25 +71,24 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
         )}
       </mui.Box>
 
-      {tables[tableId!] ? (
+      {currentTable ? (
         <mui.Box>
           <mui.Typography css={css.tableListTitle}>Columns</mui.Typography>
           <mui.Box css={css.tableList}>
-            {Object.keys(tables[tableId!].columns).map((columnName) => (
+            {currentTable.columns.map((column) => (
               <ListItem
-                key={columnName}
-                text={columnName}
-                setTables={setTables}
+                key={`${currentTable.name}-${column.name}`}
+                text={column.name}
                 type="column"
-                currentTable={tableId!}
-                isPrimaryKey={tables[tableId!].columns[columnName].primaryKey}
-                isInteger={['integer', 'bigint'].includes(tables[tableId!].columns[columnName].type)}
-                foreignKey={getForeignKeySchema(columnName)}
-                openAddKeyModal={openAddKeyModal}
+                isPrimaryKey={column.primaryKey}
+                isInteger={['integer', 'bigint'].includes(column.type)}
+                foreignKey=""
+                openAddKeyModal={() => {}}
               />
             ))}
           </mui.Box>
 
+          {/* 
           {!!Object.keys(tables[tableId!].indexes).length && (
             <mui.Box>
               <mui.Typography css={css.tableListTitle}>Indexes</mui.Typography>
@@ -136,11 +112,17 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
               <mui.Typography css={css.tableListTitle}>Foreign Keys</mui.Typography>
               <mui.Box css={css.tableList}>
                 {Object.keys(tables[tableId!].foreignKeys).map((foreignKeyName) => (
-                  <ListItem key={foreignKeyName} text={foreignKeyName} setTables={setTables} type="foreignKey" currentTable={tableId!} />
+                  <ListItem
+                    key={foreignKeyName}
+                    text={foreignKeyName}
+                    setTables={setTables}
+                    type="foreignKey"
+                    currentTable={tableId!}
+                  />
                 ))}
               </mui.Box>
             </mui.Box>
-          )}
+          )} */}
         </mui.Box>
       ) : (
         <EmptyContainer
@@ -151,14 +133,9 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
         />
       )}
 
-      <AddColumnModal
-        currentTable={tableId!}
-        tables={tables}
-        setTables={setTables}
-        open={isAddColumnModalOpen}
-        onClose={() => setIsAddColumnModalOpen(false)}
-      />
+      <ColumnModal open={columnModal} onClose={() => setColumnModal(ModalState.Closed)} />
 
+      {/*
       <AddIndexModal
         currentTable={tableId!}
         tables={tables}
@@ -174,9 +151,9 @@ const Table: React.FC<TablePageProps> = ({ tables, setTables }) => {
         open={addForeinKeyModal.open}
         setTables={setTables}
         onClose={() => setAddForeignKeyModal({ open: false, collumnFrom: '' })}
-      />
+      /> */}
     </mui.Box>
   );
 };
 
-export default Table;
+export default TablePage;

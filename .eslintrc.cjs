@@ -15,5 +15,6 @@ module.exports = {
     '@typescript-eslint/no-unused-expressions': 'off',
     '@typescript-eslint/no-shadow': 'off',
     'prettier/prettier': 'error',
+    'no-param-reassign': 'off',
   },
 };

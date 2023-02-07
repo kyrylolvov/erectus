@@ -6,6 +6,8 @@
   --secondary-text-color: #666671;
 
   --cta-button-color: #c5f74f;
+
+  --input-text-color: #cbd1d7;
 }
 
 @font-face {
@@ -54,22 +56,12 @@ body {
 
 :not(.MuiPopover-root).MuiModal-root .MuiBackdrop-root {
   backdrop-filter: blur(3px);
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  background-color: hsla(0, 0%, 100%, 0.15) !important;
+  background-color: hsla(0, 0%, 100%, 0.07) !important;
 }
 
 .MuiTypography-root {
   font-family: 'Inter' !important;
 }
-
-.Joy-focused {
-  --Input-focusedHighlight: var(--cta-button-color) !important;
-}
-
-.MuiOption-root {
-  background-color: red;
-}
-
 .Mui-focused .MuiOutlinedInput-notchedOutline {
   border-color: var(--cta-button-color) !important;
 }
@@ -99,9 +91,16 @@ body {
   background: #22262d;
 }
 
-#delete-table-popover .MuiPaper-root {
+.item-popover .MuiPaper-root {
   background: #171b21;
   padding: 8px 16px;
+}
+
+.erectus-input:-webkit-autofill,
+.erectus-input:-webkit-autofill:hover,
+.erectus-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--input-text-color);
+  -webkit-box-shadow: 0 0 0px 40rem var(--main-bg-color) inset;
 }
 
 .MuiInput-root.Joy-disabled {
