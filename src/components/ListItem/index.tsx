@@ -8,20 +8,39 @@ import { ListItemProps } from './utils';
 import { useStore } from '../../store';
 import { ModalState } from '../../store/types';
 import ColumnModal from '../ColumnModal';
+import IndexModal from '../IndexModal';
 
-const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger, isUnique, foreignKey, openAddKeyModal }) => {
+const ListItem: React.FC<ListItemProps> = ({
+  text,
+  type,
+  isPrimaryKey,
+  isInteger,
+  isUnique,
+  foreignKey,
+  openAddKeyModal,
+}) => {
   const navigate = useNavigate();
-  const { deleteTable, currentTable } = useStore((state) => state);
+  const { currentTable, deleteTable, deleteColumn, deleteIndex } = useStore((state) => state);
 
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
 
   const [columnModal, setColumnModal] = useState(ModalState.Closed);
+  const [indexModal, setIndexModal] = useState(ModalState.Closed);
 
   const deleteItem = () => {
     switch (type) {
+      case 'index': {
+        deleteIndex(text);
+        break;
+      }
+      case 'column': {
+        deleteColumn(text);
+        break;
+      }
       case 'table':
       default: {
         deleteTable(text);
+        break;
       }
     }
     setAnchorEl(null);
@@ -29,10 +48,22 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger
 
   const renderPopoverButton = () => {
     switch (type) {
+      case 'index':
+        return (
+          <mui.Typography css={css.deleteItem()} onClick={deleteItem}>
+            Delete Index
+          </mui.Typography>
+        );
+      case 'column':
+        return (
+          <mui.Typography css={css.deleteItem(isPrimaryKey)} onClick={deleteItem}>
+            Delete Column
+          </mui.Typography>
+        );
       case 'table':
       default:
         return (
-          <mui.Typography css={css.deleteitem()} onClick={deleteItem}>
+          <mui.Typography css={css.deleteItem()} onClick={deleteItem}>
             Delete Table
           </mui.Typography>
         );
@@ -63,7 +94,7 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger
           <mui.Box>
             {isUnique && (
               <mui.Tooltip title="Unique index" placement="top">
-                <muiIcons.Fingerprint css={css.columnIcon} />
+                <muiIcons.Star css={css.columnIcon} />
               </mui.Tooltip>
             )}
           </mui.Box>
@@ -79,6 +110,7 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger
           onClick={() => {
             if (type === 'table') navigate(`/tables/${text}`);
             else if (type === 'column') setColumnModal(ModalState.Edit);
+            else if (type === 'index') setIndexModal(ModalState.Edit);
           }}
           css={css.text}
         >
@@ -104,6 +136,12 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger
         open={columnModal}
         onClose={() => setColumnModal(ModalState.Closed)}
         column={currentTable?.columns.find((column) => column.name === text)}
+      />
+
+      <IndexModal
+        open={indexModal}
+        onClose={() => setIndexModal(ModalState.Closed)}
+        index={currentTable?.indexes.find((index) => index.name === text)}
       />
     </mui.Box>
   );

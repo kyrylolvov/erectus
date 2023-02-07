@@ -54,7 +54,7 @@ export const popoverItem =
     },
   });
 
-export const deleteitem =
+export const deleteItem =
   (disabled?: boolean): CSSWithTheme =>
   () => ({
     color: disabled ? '#666670' : '#D15B6B',

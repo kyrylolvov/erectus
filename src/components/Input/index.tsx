@@ -5,9 +5,9 @@ import * as css from './css';
 interface InputProps {
   label: string;
   value: string | string[];
-  onChange: (e: mui.SelectChangeEvent<any>) => void;
-  name: string;
   placeholder: string;
+  onChange?: (e: mui.SelectChangeEvent<any>) => void;
+  name?: string;
   disabled?: boolean;
 }
 

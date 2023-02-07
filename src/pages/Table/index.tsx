@@ -8,6 +8,7 @@ import { useStore } from '../../store';
 import EmptyContainer from '../../components/EmptyContainer';
 import ListItem from '../../components/ListItem';
 import ColumnModal from '../../components/ColumnModal';
+import IndexModal from '../../components/IndexModal';
 
 const TablePage: React.FC = () => {
   const { tableId } = useParams();
@@ -18,6 +19,7 @@ const TablePage: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const [columnModal, setColumnModal] = useState(ModalState.Closed);
+  const [indexModal, setIndexModal] = useState(ModalState.Closed);
 
   useEffect(() => {
     setCurrentTable(tableId ?? '');
@@ -60,7 +62,7 @@ const TablePage: React.FC = () => {
                 sx={{ marginTop: '4px' }}
                 css={css.popoverItem}
                 onClick={() => {
-                  // setIsAddIndexModalOpen(true);
+                  setIndexModal(ModalState.Add);
                   setAnchorEl(null);
                 }}
               >
@@ -77,7 +79,7 @@ const TablePage: React.FC = () => {
           <mui.Box css={css.tableList}>
             {currentTable.columns.map((column) => (
               <ListItem
-                key={`${currentTable.name}-${column.name}`}
+                key={`${currentTable.name}-${column.name}-column`}
                 text={column.name}
                 type="column"
                 isPrimaryKey={column.primaryKey}
@@ -87,6 +89,22 @@ const TablePage: React.FC = () => {
               />
             ))}
           </mui.Box>
+
+          {!!currentTable.indexes.length && (
+            <mui.Box>
+              <mui.Typography css={css.tableListTitle}>Indexes</mui.Typography>
+              <mui.Box css={css.tableList}>
+                {currentTable.indexes.map((index) => (
+                  <ListItem
+                    key={`${currentTable.name}-${index.name}-index`}
+                    text={index.name}
+                    type="index"
+                    isUnique={index.isUnique}
+                  />
+                ))}
+              </mui.Box>
+            </mui.Box>
+          )}
 
           {/* 
           {!!Object.keys(tables[tableId!].indexes).length && (
@@ -134,6 +152,8 @@ const TablePage: React.FC = () => {
       )}
 
       <ColumnModal open={columnModal} onClose={() => setColumnModal(ModalState.Closed)} />
+
+      <IndexModal open={indexModal} onClose={() => setIndexModal(ModalState.Closed)} />
 
       {/*
       <AddIndexModal

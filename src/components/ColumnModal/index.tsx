@@ -5,7 +5,13 @@ import * as yup from 'yup';
 import Modal from '../Modal';
 import * as css from './css';
 import Button from '../Button';
-import { ColumnType, KeyOfColumnType, PrimaryColumnType, variableNameRegex, variableTypingValidation } from '../../utils/columns';
+import {
+  ColumnType,
+  KeyOfColumnType,
+  PrimaryColumnType,
+  variableNameRegex,
+  variableTypingValidation,
+} from '../../utils/columns';
 import { useStore } from '../../store';
 import Input from '../Input';
 import Select from '../Select';
@@ -65,7 +71,9 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
 
   return (
     <Modal open={!!open} onClose={onClose}>
-      <mui.Typography css={css.modalTitle}>{open === ModalState.Add ? 'Creating Column' : 'Editing Column'}</mui.Typography>
+      <mui.Typography css={css.modalTitle}>
+        {open === ModalState.Add ? 'Creating Column' : 'Editing Column'}
+      </mui.Typography>
       <mui.Box sx={{ marginTop: '24px' }}>
         <Input
           label="Column Name"

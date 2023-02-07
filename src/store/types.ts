@@ -42,6 +42,11 @@ export interface ErectusStore {
 
   addColumn: (column: Column) => void;
   editColumn: (columnName: string, column: Column) => void;
+  deleteColumn: (columnName: string) => void;
+
+  addIndex: (index: Index) => void;
+  deleteIndex: (indexName: string) => void;
+  editIndex: (indexName: string, index: Index) => void;
 }
 
 export enum ModalState {
