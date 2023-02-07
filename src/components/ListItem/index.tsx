@@ -9,26 +9,24 @@ import { useStore } from '../../store';
 import { ModalState } from '../../store/types';
 import ColumnModal from '../ColumnModal';
 import IndexModal from '../IndexModal';
+import ForeignKeyModal from '../ForeignKeyModal';
 
-const ListItem: React.FC<ListItemProps> = ({
-  text,
-  type,
-  isPrimaryKey,
-  isInteger,
-  isUnique,
-  foreignKey,
-  openAddKeyModal,
-}) => {
+const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger, isUnique, foreignKey }) => {
   const navigate = useNavigate();
-  const { currentTable, deleteTable, deleteColumn, deleteIndex } = useStore((state) => state);
+  const { currentTable, deleteTable, deleteColumn, deleteIndex, deleteForeignKey } = useStore((state) => state);
 
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
 
   const [columnModal, setColumnModal] = useState(ModalState.Closed);
   const [indexModal, setIndexModal] = useState(ModalState.Closed);
+  const [foreignKeyModal, setForeignKeyModal] = useState(ModalState.Closed);
 
   const deleteItem = () => {
     switch (type) {
+      case 'foreignKey': {
+        deleteForeignKey(text);
+        break;
+      }
       case 'index': {
         deleteIndex(text);
         break;
@@ -48,6 +46,12 @@ const ListItem: React.FC<ListItemProps> = ({
 
   const renderPopoverButton = () => {
     switch (type) {
+      case 'foreignKey':
+        return (
+          <mui.Typography css={css.deleteItem()} onClick={deleteItem}>
+            Delete Foreign Key
+          </mui.Typography>
+        );
       case 'index':
         return (
           <mui.Typography css={css.deleteItem()} onClick={deleteItem}>
@@ -56,9 +60,28 @@ const ListItem: React.FC<ListItemProps> = ({
         );
       case 'column':
         return (
-          <mui.Typography css={css.deleteItem(isPrimaryKey)} onClick={deleteItem}>
-            Delete Column
-          </mui.Typography>
+          <mui.Box>
+            <mui.Typography
+              css={css.popoverItem(!isInteger || !!foreignKey)}
+              onClick={() => {
+                if (isInteger && !foreignKey) {
+                  setForeignKeyModal(ModalState.Add);
+                  setAnchorEl(null);
+                }
+              }}
+            >
+              Add Foreign Key
+            </mui.Typography>
+            <mui.Typography
+              css={css.deleteItem(isPrimaryKey)}
+              onClick={() => {
+                if (!isPrimaryKey) deleteItem();
+              }}
+              sx={{ marginTop: '4px' }}
+            >
+              Delete Column
+            </mui.Typography>
+          </mui.Box>
         );
       case 'table':
       default:
@@ -111,6 +134,7 @@ const ListItem: React.FC<ListItemProps> = ({
             if (type === 'table') navigate(`/tables/${text}`);
             else if (type === 'column') setColumnModal(ModalState.Edit);
             else if (type === 'index') setIndexModal(ModalState.Edit);
+            else if (type === 'foreignKey') setForeignKeyModal(ModalState.Edit);
           }}
           css={css.text}
         >
@@ -142,6 +166,13 @@ const ListItem: React.FC<ListItemProps> = ({
         open={indexModal}
         onClose={() => setIndexModal(ModalState.Closed)}
         index={currentTable?.indexes.find((index) => index.name === text)}
+      />
+
+      <ForeignKeyModal
+        open={foreignKeyModal}
+        onClose={() => setForeignKeyModal(ModalState.Closed)}
+        column={currentTable?.columns.find((column) => column.name === text)}
+        foreignKey={currentTable?.foreignKeys.find((foreignKey) => foreignKey.name === text)}
       />
     </mui.Box>
   );

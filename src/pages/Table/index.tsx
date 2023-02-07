@@ -25,6 +25,16 @@ const TablePage: React.FC = () => {
     setCurrentTable(tableId ?? '');
   }, []);
 
+  const getForeignKeySchema = (column: string) => {
+    const foreignKey = currentTable?.foreignKeys.find((foreignKey) => foreignKey.columnsFrom === column);
+    let schema = '';
+
+    if (foreignKey) {
+      schema = `${foreignKey.tableTo}.${foreignKey.columnsTo}`;
+    }
+    return schema;
+  };
+
   return (
     <mui.Box css={css.container}>
       <mui.Box css={css.header}>
@@ -84,8 +94,7 @@ const TablePage: React.FC = () => {
                 type="column"
                 isPrimaryKey={column.primaryKey}
                 isInteger={['integer', 'bigint'].includes(column.type)}
-                foreignKey=""
-                openAddKeyModal={() => {}}
+                foreignKey={getForeignKeySchema(column.name)}
               />
             ))}
           </mui.Box>
@@ -106,41 +115,20 @@ const TablePage: React.FC = () => {
             </mui.Box>
           )}
 
-          {/* 
-          {!!Object.keys(tables[tableId!].indexes).length && (
+          {!!currentTable.foreignKeys.length && (
             <mui.Box>
-              <mui.Typography css={css.tableListTitle}>Indexes</mui.Typography>
+              <mui.Typography css={css.tableListTitle}>Foreign Keys</mui.Typography>
               <mui.Box css={css.tableList}>
-                {Object.keys(tables[tableId!].indexes).map((indexName) => (
+                {currentTable.foreignKeys.map((foreignKey) => (
                   <ListItem
-                    key={indexName}
-                    text={indexName}
-                    setTables={setTables}
-                    type="index"
-                    currentTable={tableId!}
-                    isUnique={tables[tableId!].indexes[indexName].isUnique}
+                    key={`${currentTable.name}-${foreignKey.name}-key`}
+                    text={foreignKey.name}
+                    type="foreignKey"
                   />
                 ))}
               </mui.Box>
             </mui.Box>
           )}
-
-          {!!Object.keys(tables[tableId!].foreignKeys).length && (
-            <mui.Box>
-              <mui.Typography css={css.tableListTitle}>Foreign Keys</mui.Typography>
-              <mui.Box css={css.tableList}>
-                {Object.keys(tables[tableId!].foreignKeys).map((foreignKeyName) => (
-                  <ListItem
-                    key={foreignKeyName}
-                    text={foreignKeyName}
-                    setTables={setTables}
-                    type="foreignKey"
-                    currentTable={tableId!}
-                  />
-                ))}
-              </mui.Box>
-            </mui.Box>
-          )} */}
         </mui.Box>
       ) : (
         <EmptyContainer

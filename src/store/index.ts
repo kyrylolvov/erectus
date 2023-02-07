@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Column, ErectusStore, Index, Table } from './types';
+import { Column, ErectusStore, ForeignKey, Index, Table } from './types';
 
 export const useStore = create<ErectusStore>()(
   persist(
@@ -115,6 +115,43 @@ export const useStore = create<ErectusStore>()(
           const updatedCurrentTable = {
             ...currentTable,
             indexes: currentTable.indexes.filter((index) => index.name !== indexName),
+          };
+          const updatedTables = tables.map((table) => {
+            if (table.name === currentTable.name) {
+              table = updatedCurrentTable;
+            }
+            return table;
+          });
+
+          set({ tables: updatedTables, currentTable: updatedCurrentTable });
+        }
+      },
+
+      addForeignKey: (foreignKey: ForeignKey) => {
+        const { currentTable, tables } = get();
+
+        if (currentTable) {
+          const updatedCurrentTable = {
+            ...currentTable,
+            foreignKeys: [...(currentTable?.foreignKeys ?? []), foreignKey],
+          };
+          const updatedTables = tables.map((table) => {
+            if (table.name === currentTable.name) {
+              table = updatedCurrentTable;
+            }
+            return table;
+          });
+
+          set({ tables: updatedTables, currentTable: updatedCurrentTable });
+        }
+      },
+      deleteForeignKey: (foreignKeyName: string) => {
+        const { currentTable, tables } = get();
+
+        if (currentTable) {
+          const updatedCurrentTable = {
+            ...currentTable,
+            foreignKeys: currentTable.foreignKeys.filter((foreignKey) => foreignKey.name !== foreignKeyName),
           };
           const updatedTables = tables.map((table) => {
             if (table.name === currentTable.name) {

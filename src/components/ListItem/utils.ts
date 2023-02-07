@@ -7,7 +7,6 @@ interface IColumnItemProps extends IListItem {
   isInteger: boolean;
   isUnique?: boolean;
   foreignKey: string;
-  openAddKeyModal: (column: string) => void;
 }
 
 interface ITableItemProps extends IListItem {
@@ -16,7 +15,6 @@ interface ITableItemProps extends IListItem {
   isInteger?: boolean;
   isUnique?: boolean;
   foreignKey?: string;
-  openAddKeyModal?: (column: string) => void;
 }
 
 interface IIndexItemProps extends IListItem {
@@ -25,7 +23,6 @@ interface IIndexItemProps extends IListItem {
   isInteger?: boolean;
   isUnique: boolean;
   foreignKey?: string;
-  openAddKeyModal?: (column: string) => void;
 }
 
 interface IForeignKeyProps extends IListItem {
@@ -33,9 +30,7 @@ interface IForeignKeyProps extends IListItem {
   isPrimaryKey?: boolean;
   isInteger?: boolean;
   isUnique?: boolean;
-
   foreignKey?: string;
-  openAddKeyModal?: (column: string) => void;
 }
 
 export type ListItemProps = IColumnItemProps | ITableItemProps | IIndexItemProps | IForeignKeyProps;

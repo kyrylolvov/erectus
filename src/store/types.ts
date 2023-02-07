@@ -47,6 +47,9 @@ export interface ErectusStore {
   addIndex: (index: Index) => void;
   deleteIndex: (indexName: string) => void;
   editIndex: (indexName: string, index: Index) => void;
+
+  addForeignKey: (foreignKey: ForeignKey) => void;
+  deleteForeignKey: (foreignKeyName: string) => void;
 }
 
 export enum ModalState {

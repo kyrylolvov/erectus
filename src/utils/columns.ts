@@ -25,6 +25,14 @@ export const variableTypingValidation = (value: string): string => {
   return validatedValue;
 };
 
+export const getColumnTypeName = (enumValue: ColumnType) => {
+  const name = (Object.keys(ColumnType) as Array<KeyOfColumnType>).map((columnType) => {
+    if (ColumnType[columnType] === enumValue) return columnType;
+    return '';
+  });
+  return name;
+};
+
 export type KeyOfColumnType = keyof typeof ColumnType;
 
 export const variableNameRegex = /^[a-zA-Z][a-zA-Z0-9_]*$/;

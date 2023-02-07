@@ -7,6 +7,7 @@ import * as css from './css';
 import Button from '../Button';
 import {
   ColumnType,
+  getColumnTypeName,
   KeyOfColumnType,
   PrimaryColumnType,
   variableNameRegex,
@@ -92,7 +93,9 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
             label="Column Type"
             value={values.columnType}
             onChange={(e) => setFieldValue('columnType', e.target.value)}
-            renderValue={(selected) => selected || 'Choose a column type'}
+            renderValue={(selected) =>
+              selected.length ? getColumnTypeName(selected as ColumnType) : 'Choose a column type'
+            }
           >
             {(Object.keys(ColumnType) as Array<KeyOfColumnType>).map((columnTypeName) => (
               <mui.MenuItem key={ColumnType[columnTypeName]} value={ColumnType[columnTypeName]}>
