@@ -14,6 +14,8 @@ export const selectField =
       color: isEmpty ? '#7A7C80' : '#CAD1D8',
       fontSize: '14px',
       transition: 'all 0.2s',
+      height: '54px',
+      boxSizing: 'border-box',
 
       svg: {
         color: '#7A7C80',

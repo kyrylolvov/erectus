@@ -6,7 +6,7 @@ export const modalTitle: CSSWithTheme = () => ({
 
 export const divider: CSSWithTheme = () => ({
   borderColor: 'var(--secondary-text-color)',
-  margin: '36px 0',
+  margin: '24px 0',
 });
 
 export const inputLabel: CSSWithTheme = () => ({

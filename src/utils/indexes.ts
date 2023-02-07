@@ -1,5 +1,8 @@
 /* eslint-disable no-plusplus */
-export const arraysEqual = (a: string[], b: string[]) => {
+export const arraysEqual = (firstArray: string[], secondArray: string[]) => {
+  const a = firstArray.sort();
+  const b = secondArray.sort();
+
   if (a === b) return true;
   if (a == null || b == null) return false;
   if (a.length !== b.length) return false;

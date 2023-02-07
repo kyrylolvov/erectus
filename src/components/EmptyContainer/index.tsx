@@ -18,7 +18,7 @@ const EmptyContainer: React.FC<EmptyContainerProps> = ({ title, text, buttonText
     </mui.Box>
     <mui.Typography variant="subtitle1">{title}</mui.Typography>
     <mui.Typography variant="body1">{text}</mui.Typography>
-    <Button text={buttonText} sx={{ marginTop: '24px' }} onClick={buttonAction} />
+    <Button text={buttonText} sx={{ marginTop: '24px' }} width={150} onClick={buttonAction} />
   </mui.Box>
 );
 
