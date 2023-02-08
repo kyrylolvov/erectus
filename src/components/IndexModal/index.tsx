@@ -28,7 +28,7 @@ const IndexModal: React.FC<IndexModalProps> = ({ open, onClose, index }) => {
 
   const initialValues = useMemo<IndexModalValues>(
     () => ({
-      columns: index?.columnsTo ?? [],
+      columns: index?.columns ?? [],
       isUnique: index?.isUnique ?? true,
       name: index?.name ?? '',
     }),
@@ -47,7 +47,7 @@ const IndexModal: React.FC<IndexModalProps> = ({ open, onClose, index }) => {
     onSubmit: (values) => {
       const newIndex: Index = {
         name: values.name,
-        columnsTo: values.columns,
+        columns: values.columns,
         isUnique: values.isUnique,
       };
       if (open === ModalState.Add) addIndex(newIndex);
@@ -67,9 +67,7 @@ const IndexModal: React.FC<IndexModalProps> = ({ open, onClose, index }) => {
 
   return (
     <Modal open={!!open} onClose={onClose}>
-      <mui.Typography css={css.modalTitle}>
-        {open === ModalState.Add ? 'Creating Index' : 'Editing index'}
-      </mui.Typography>
+      <mui.Typography css={css.modalTitle}>{open === ModalState.Add ? 'Creating Index' : 'Editing index'}</mui.Typography>
       <mui.Box sx={{ marginTop: '24px' }}>
         <Select
           label="Columns"
@@ -87,19 +85,11 @@ const IndexModal: React.FC<IndexModalProps> = ({ open, onClose, index }) => {
       </mui.Box>
 
       <mui.Box sx={{ marginTop: '24px' }}>
-        <Input
-          label="Index name"
-          value={values.name}
-          disabled
-          placeholder="Automatically generated from selected columns"
-        />
+        <Input label="Index name" value={values.name} disabled placeholder="Automatically generated from selected columns" />
       </mui.Box>
 
       <mui.Box css={css.twoColumnContainer}>
-        <mui.Box
-          css={css.checkboxContainer(values.isUnique)}
-          onClick={() => setFieldValue('isUnique', !values.isUnique)}
-        >
+        <mui.Box css={css.checkboxContainer(values.isUnique)} onClick={() => setFieldValue('isUnique', !values.isUnique)}>
           <mui.FormControlLabel
             sx={{ pointerEvents: 'none' }}
             control={<mui.Checkbox checked={values.isUnique} />}
@@ -115,7 +105,7 @@ const IndexModal: React.FC<IndexModalProps> = ({ open, onClose, index }) => {
           disabled={
             JSON.stringify(errors) !== '{}' ||
             !values.columns.length ||
-            !!currentTable?.indexes.some((index) => arraysEqual(index.columnsTo, values.columns))
+            !!currentTable?.indexes.some((index) => arraysEqual(index.columns, values.columns))
           }
         />
       </mui.Box>

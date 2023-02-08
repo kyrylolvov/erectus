@@ -1,6 +1,6 @@
 export enum PrimaryColumnType {
-  Serial = 'serial',
-  BigSerial = 'bigserial',
+  'Serial' = 'serial',
+  'BigSerial' = 'bigserial',
 }
 
 export enum ColumnType {
@@ -25,6 +25,14 @@ export const variableTypingValidation = (value: string): string => {
   return validatedValue;
 };
 
+export const getPrimaryColumnTypeName = (enumValue: PrimaryColumnType) => {
+  const name = (Object.keys(PrimaryColumnType) as Array<KeyOfPrimaryColumnType>).map((columnType) => {
+    if (PrimaryColumnType[columnType] === enumValue) return columnType;
+    return '';
+  });
+  return name;
+};
+
 export const getColumnTypeName = (enumValue: ColumnType) => {
   const name = (Object.keys(ColumnType) as Array<KeyOfColumnType>).map((columnType) => {
     if (ColumnType[columnType] === enumValue) return columnType;
@@ -33,6 +41,7 @@ export const getColumnTypeName = (enumValue: ColumnType) => {
   return name;
 };
 
+export type KeyOfPrimaryColumnType = keyof typeof PrimaryColumnType;
 export type KeyOfColumnType = keyof typeof ColumnType;
 
 export const variableNameRegex = /^[a-zA-Z][a-zA-Z0-9_]*$/;

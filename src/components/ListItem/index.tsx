@@ -24,7 +24,7 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger
 
   const relatedTables = () => tables.filter((table) => table.foreignKeys.find((foreignKey) => foreignKey.tableTo === text));
 
-  const relatedIndexes = () => currentTable?.indexes.filter((index) => index.columnsTo.includes(text));
+  const relatedIndexes = () => currentTable?.indexes.filter((index) => index.columns.includes(text));
 
   const deleteItem = () => {
     switch (type) {

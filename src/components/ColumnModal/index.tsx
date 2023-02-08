@@ -8,7 +8,9 @@ import Button from '../Button';
 import {
   ColumnType,
   getColumnTypeName,
+  getPrimaryColumnTypeName,
   KeyOfColumnType,
+  KeyOfPrimaryColumnType,
   PrimaryColumnType,
   variableNameRegex,
   variableTypingValidation,
@@ -26,7 +28,7 @@ interface ColumnModalProps {
 
 interface ColumnModalValues {
   columnName: string;
-  columnType: ColumnType | PrimaryColumnType | '';
+  columnType: ColumnType | PrimaryColumnType | string;
   columnIsNullable: boolean;
 }
 
@@ -72,9 +74,7 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
 
   return (
     <Modal open={!!open} onClose={onClose}>
-      <mui.Typography css={css.modalTitle}>
-        {open === ModalState.Add ? 'Creating Column' : 'Editing Column'}
-      </mui.Typography>
+      <mui.Typography css={css.modalTitle}>{open === ModalState.Add ? 'Creating Column' : 'Editing Column'}</mui.Typography>
       <mui.Box sx={{ marginTop: '24px' }}>
         <Input
           label="Column Name"
@@ -93,15 +93,26 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
             label="Column Type"
             value={values.columnType}
             onChange={(e) => setFieldValue('columnType', e.target.value)}
-            renderValue={(selected) =>
-              selected.length ? getColumnTypeName(selected as ColumnType) : 'Choose a column type'
-            }
+            renderValue={(selected) => {
+              if (selected.length) {
+                return column?.primaryKey
+                  ? getPrimaryColumnTypeName(selected as PrimaryColumnType)
+                  : getColumnTypeName(selected as ColumnType);
+              }
+              return 'Choose a column type';
+            }}
           >
-            {(Object.keys(ColumnType) as Array<KeyOfColumnType>).map((columnTypeName) => (
-              <mui.MenuItem key={ColumnType[columnTypeName]} value={ColumnType[columnTypeName]}>
-                {columnTypeName}
-              </mui.MenuItem>
-            ))}
+            {column?.primaryKey
+              ? (Object.keys(PrimaryColumnType) as Array<KeyOfPrimaryColumnType>).map((columnTypeName) => (
+                  <mui.MenuItem key={PrimaryColumnType[columnTypeName]} value={PrimaryColumnType[columnTypeName]}>
+                    {columnTypeName}
+                  </mui.MenuItem>
+                ))
+              : (Object.keys(ColumnType) as Array<KeyOfColumnType>).map((columnTypeName) => (
+                  <mui.MenuItem key={ColumnType[columnTypeName]} value={ColumnType[columnTypeName]}>
+                    {columnTypeName}
+                  </mui.MenuItem>
+                ))}
           </Select>
         </mui.Box>
 
