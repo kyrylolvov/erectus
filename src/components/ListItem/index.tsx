@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import * as mui from '@mui/material';
 import * as muiIcons from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import * as css from './css';
 import { ListItemProps } from './utils';
 import { useStore } from '../../store';
@@ -13,13 +14,18 @@ import ForeignKeyModal from '../ForeignKeyModal';
 
 const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger, isUnique, foreignKey }) => {
   const navigate = useNavigate();
-  const { currentTable, deleteTable, deleteColumn, deleteIndex, deleteForeignKey } = useStore((state) => state);
+  const { tables, currentTable, deleteTable, deleteColumn, deleteIndex, deleteForeignKey } = useStore((state) => state);
 
   const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
 
   const [columnModal, setColumnModal] = useState(ModalState.Closed);
   const [indexModal, setIndexModal] = useState(ModalState.Closed);
   const [foreignKeyModal, setForeignKeyModal] = useState(ModalState.Closed);
+
+  const relatedTables = () => {
+    const relatedTables = tables.filter((table) => table.foreignKeys.find((foreignKey) => foreignKey.tableTo === text));
+    return relatedTables;
+  };
 
   const deleteItem = () => {
     switch (type) {
@@ -86,7 +92,17 @@ const ListItem: React.FC<ListItemProps> = ({ text, type, isPrimaryKey, isInteger
       case 'table':
       default:
         return (
-          <mui.Typography css={css.deleteItem()} onClick={deleteItem}>
+          <mui.Typography
+            css={css.deleteItem(!!relatedTables().length)}
+            onClick={() => {
+              const relatedTablesList = relatedTables();
+              if (relatedTablesList.length) {
+                toast.error(`Delete foreign key in ${relatedTablesList[0].name} first`);
+              } else {
+                deleteItem();
+              }
+            }}
+          >
             Delete Table
           </mui.Typography>
         );

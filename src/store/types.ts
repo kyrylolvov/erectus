@@ -46,10 +46,11 @@ export interface ErectusStore {
   deleteColumn: (columnName: string) => void;
 
   addIndex: (index: Index) => void;
-  deleteIndex: (indexName: string) => void;
   editIndex: (indexName: string, index: Index) => void;
+  deleteIndex: (indexName: string) => void;
 
   addForeignKey: (foreignKey: ForeignKey) => void;
+  editForeignKey: (indexName: string, foreignKey: ForeignKey) => void;
   deleteForeignKey: (foreignKeyName: string) => void;
 
   updateTables: (values: UpdateTablesUnion) => void;

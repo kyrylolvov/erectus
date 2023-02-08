@@ -61,6 +61,16 @@ export const useStore = create<ErectusStore>()(
 
         updateTables({ action: UpdateTablesAction.Add, objectKey: 'foreignKey', item: foreignKey });
       },
+      editForeignKey: (foreignKeyName: string, foreignKey: ForeignKey) => {
+        const { updateTables } = get();
+
+        updateTables({
+          action: UpdateTablesAction.Edit,
+          objectKey: 'foreignKey',
+          itemName: foreignKeyName,
+          item: foreignKey,
+        });
+      },
       deleteForeignKey: (foreignKeyName: string) => {
         const { updateTables } = get();
 
