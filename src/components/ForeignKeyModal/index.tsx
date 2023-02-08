@@ -29,13 +29,13 @@ interface ForeignKeyModalValues {
 }
 
 const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column, foreignKey }) => {
-  const { currentTable, tables, addForeignKey } = useStore((state) => state);
+  const { currentTable, tables, addForeignKey, editForeignKey } = useStore((state) => state);
 
   const initialValues = useMemo<ForeignKeyModalValues>(
     () => ({
       name: open === ModalState.Edit ? foreignKey?.name! : '',
       tableFrom: currentTable?.name ?? '',
-      columnsFrom: column?.name ?? '',
+      columnsFrom: open === ModalState.Edit ? foreignKey?.columnsFrom! : column?.name ?? '',
       tableTo: open === ModalState.Edit ? foreignKey?.tableTo! : '',
       columnsTo: open === ModalState.Edit ? foreignKey?.columnsTo! : '',
       onUpdate: open === ModalState.Edit ? foreignKey?.onUpdate! : 'no action',
@@ -62,6 +62,7 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
     onSubmit: (values) => {
       const newForeignKey: ForeignKey = { ...values };
       if (open === ModalState.Add) addForeignKey(newForeignKey);
+      else if (open === ModalState.Edit && foreignKey) editForeignKey(foreignKey?.name, newForeignKey);
       onClose();
     },
   });

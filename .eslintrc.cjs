@@ -16,5 +16,6 @@ module.exports = {
     '@typescript-eslint/no-shadow': 'off',
     'prettier/prettier': 'error',
     'no-param-reassign': 'off',
+    'no-return-assign': 'off',
   },
 };

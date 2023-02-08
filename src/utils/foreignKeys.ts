@@ -21,7 +21,13 @@ export const foreignKeyActions = [
   },
 ];
 
-export const renderSelectValue = (empty: boolean, value: string, placeholder: string, disabled?: boolean, disabledPlaceholder?: string) => {
+export const renderSelectValue = (
+  empty: boolean,
+  value: string,
+  placeholder: string,
+  disabled?: boolean,
+  disabledPlaceholder?: string
+) => {
   if (empty) {
     return placeholder;
   }

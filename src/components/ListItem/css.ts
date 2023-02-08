@@ -59,5 +59,5 @@ export const deleteItem =
   () => ({
     color: disabled ? '#666670' : '#D15B6B',
     fontSize: '14px',
-    cursor: disabled ? 'not-allowed' : 'pointer',
+    cursor: disabled ? 'help' : 'pointer',
   });

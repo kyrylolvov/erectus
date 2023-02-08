@@ -7,21 +7,22 @@ export interface Table {
   foreignKeys: ForeignKey[];
 }
 
-export interface Column {
+export interface TableItem {
   name: string;
+}
+
+export interface Column extends TableItem {
   type: ColumnType | PrimaryColumnType | '';
   primaryKey: boolean;
   notNull: boolean;
 }
 
-export interface Index {
-  name: string;
+export interface Index extends TableItem {
   columnsTo: string[];
   isUnique: boolean;
 }
 
-export interface ForeignKey {
-  name: string;
+export interface ForeignKey extends TableItem {
   tableFrom: string;
   columnsFrom: string;
   tableTo: string;
@@ -45,11 +46,14 @@ export interface ErectusStore {
   deleteColumn: (columnName: string) => void;
 
   addIndex: (index: Index) => void;
-  deleteIndex: (indexName: string) => void;
   editIndex: (indexName: string, index: Index) => void;
+  deleteIndex: (indexName: string) => void;
 
   addForeignKey: (foreignKey: ForeignKey) => void;
+  editForeignKey: (indexName: string, foreignKey: ForeignKey) => void;
   deleteForeignKey: (foreignKeyName: string) => void;
+
+  updateTables: (values: UpdateTablesUnion) => void;
 }
 
 export enum ModalState {
@@ -57,3 +61,31 @@ export enum ModalState {
   Add = 'add',
   Edit = 'edit',
 }
+
+export enum UpdateTablesAction {
+  Add = 'add',
+  Edit = 'edit',
+  Delete = 'delete',
+}
+
+interface UpdateTables {
+  action: UpdateTablesAction;
+  itemName?: string;
+}
+
+export interface UpdateTablesColumn extends UpdateTables {
+  objectKey: 'column';
+  item?: Column;
+}
+
+export interface UpdateTablesIndex extends UpdateTables {
+  objectKey: 'index';
+  item?: Index;
+}
+
+export interface UpdateTablesForeignKey extends UpdateTables {
+  objectKey: 'foreignKey';
+  item?: ForeignKey;
+}
+
+export type UpdateTablesUnion = UpdateTablesColumn | UpdateTablesIndex | UpdateTablesForeignKey;
