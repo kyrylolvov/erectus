@@ -34,7 +34,7 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
   const initialValues = useMemo<ForeignKeyModalValues>(
     () => ({
       name: open === ModalState.Edit ? foreignKey?.name! : '',
-      tableFrom: open === ModalState.Edit ? currentTable?.name! : '',
+      tableFrom: currentTable?.name ?? '',
       columnsFrom: column?.name ?? '',
       tableTo: open === ModalState.Edit ? foreignKey?.tableTo! : '',
       columnsTo: open === ModalState.Edit ? foreignKey?.columnsTo! : '',
@@ -83,7 +83,10 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
         <Select
           label="Related table"
           value={values.tableTo}
-          onChange={(e) => setFieldValue('tableTo', e.target.value)}
+          onChange={(e) => {
+            setFieldValue('tableTo', e.target.value);
+            setFieldValue('columnsTo', '');
+          }}
           renderValue={(selected) => renderSelectValue(!values.tableTo, String(selected), 'Choose a related table')}
         >
           {tables
