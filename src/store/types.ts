@@ -7,21 +7,22 @@ export interface Table {
   foreignKeys: ForeignKey[];
 }
 
-export interface Column {
+export interface TableItem {
   name: string;
+}
+
+export interface Column extends TableItem {
   type: ColumnType | PrimaryColumnType | '';
   primaryKey: boolean;
   notNull: boolean;
 }
 
-export interface Index {
-  name: string;
+export interface Index extends TableItem {
   columnsTo: string[];
   isUnique: boolean;
 }
 
-export interface ForeignKey {
-  name: string;
+export interface ForeignKey extends TableItem {
   tableFrom: string;
   columnsFrom: string;
   tableTo: string;
@@ -68,22 +69,22 @@ export enum UpdateTablesAction {
 
 interface UpdateTables {
   action: UpdateTablesAction;
-  previousName?: string;
+  itemName?: string;
 }
 
 export interface UpdateTablesColumn extends UpdateTables {
   objectKey: 'column';
-  value?: Column;
+  item?: Column;
 }
 
 export interface UpdateTablesIndex extends UpdateTables {
   objectKey: 'index';
-  value?: Index;
+  item?: Index;
 }
 
 export interface UpdateTablesForeignKey extends UpdateTables {
   objectKey: 'foreignKey';
-  value?: ForeignKey;
+  item?: ForeignKey;
 }
 
 export type UpdateTablesUnion = UpdateTablesColumn | UpdateTablesIndex | UpdateTablesForeignKey;

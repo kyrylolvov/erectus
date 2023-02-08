@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { getPlural } from '../utils/common';
-import { Column, ErectusStore, ForeignKey, Index, Table, UpdateTablesAction } from './types';
+import { Column, ErectusStore, ForeignKey, Index, Table, TableItem, UpdateTablesAction } from './types';
 
 export const useStore = create<ErectusStore>()(
   persist(
@@ -17,7 +17,7 @@ export const useStore = create<ErectusStore>()(
       addColumn: (column: Column) => {
         const { updateTables } = get();
 
-        updateTables({ action: UpdateTablesAction.Add, objectKey: 'column', value: column });
+        updateTables({ action: UpdateTablesAction.Add, objectKey: 'column', item: column });
       },
       editColumn: (columnName: string, newColumn: Column) => {
         const { updateTables } = get();
@@ -25,20 +25,20 @@ export const useStore = create<ErectusStore>()(
         updateTables({
           action: UpdateTablesAction.Edit,
           objectKey: 'column',
-          previousName: columnName,
-          value: newColumn,
+          itemName: columnName,
+          item: newColumn,
         });
       },
       deleteColumn: (columnName: string) => {
         const { updateTables } = get();
 
-        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'column', previousName: columnName });
+        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'column', itemName: columnName });
       },
 
       addIndex: (index: Index) => {
         const { updateTables } = get();
 
-        updateTables({ action: UpdateTablesAction.Add, objectKey: 'index', value: index });
+        updateTables({ action: UpdateTablesAction.Add, objectKey: 'index', item: index });
       },
       editIndex: (indexName: string, newIndex: Index) => {
         const { updateTables } = get();
@@ -46,25 +46,25 @@ export const useStore = create<ErectusStore>()(
         updateTables({
           action: UpdateTablesAction.Edit,
           objectKey: 'index',
-          previousName: indexName,
-          value: newIndex,
+          itemName: indexName,
+          item: newIndex,
         });
       },
       deleteIndex: (indexName: string) => {
         const { updateTables } = get();
 
-        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'index', previousName: indexName });
+        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'index', itemName: indexName });
       },
 
       addForeignKey: (foreignKey: ForeignKey) => {
         const { updateTables } = get();
 
-        updateTables({ action: UpdateTablesAction.Add, objectKey: 'foreignKey', value: foreignKey });
+        updateTables({ action: UpdateTablesAction.Add, objectKey: 'foreignKey', item: foreignKey });
       },
       deleteForeignKey: (foreignKeyName: string) => {
         const { updateTables } = get();
 
-        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'foreignKey', previousName: foreignKeyName });
+        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'foreignKey', itemName: foreignKeyName });
       },
 
       updateTables: (values) => {
@@ -77,7 +77,7 @@ export const useStore = create<ErectusStore>()(
             case UpdateTablesAction.Add: {
               updatedCurrentTable = {
                 ...currentTable,
-                [getPlural(values.objectKey)]: [...(currentTable?.[getPlural(values.objectKey)] ?? []), values.value],
+                [getPlural(values.objectKey)]: [...(currentTable?.[getPlural(values.objectKey)] ?? []), values.item],
               };
               break;
             }
@@ -85,8 +85,8 @@ export const useStore = create<ErectusStore>()(
               updatedCurrentTable = {
                 ...currentTable,
                 [getPlural(values.objectKey)]: currentTable[getPlural(values.objectKey)].map((item) => {
-                  if (item.name === values.previousName) {
-                    item = values.value!;
+                  if (item.name === values.itemName) {
+                    item = values.item!;
                   }
                   return item;
                 }),
@@ -97,9 +97,9 @@ export const useStore = create<ErectusStore>()(
             default: {
               updatedCurrentTable = {
                 ...currentTable,
-                [getPlural(values.objectKey)]: (currentTable[getPlural(values.objectKey)] as any).filter(
-                  (item: Column | Index | ForeignKey) => item.name !== values.previousName
-                ) as any,
+                [getPlural(values.objectKey)]: (currentTable[getPlural(values.objectKey)] as TableItem[]).filter(
+                  (item) => item.name !== values.itemName
+                ),
               };
               break;
             }
