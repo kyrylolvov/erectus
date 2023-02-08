@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Column, ErectusStore, ForeignKey, Index, Table } from './types';
+import { getPlural } from '../utils/common';
+import { Column, ErectusStore, ForeignKey, Index, Table, UpdateTablesAction } from './types';
 
 export const useStore = create<ErectusStore>()(
   persist(
@@ -14,147 +15,98 @@ export const useStore = create<ErectusStore>()(
         set({ currentTable: get().tables.find((table) => table.name === tableName) }),
 
       addColumn: (column: Column) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
 
-        if (currentTable) {
-          const updatedCurrentTable = { ...currentTable, columns: [...(currentTable?.columns ?? []), column] };
-          const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
-              table = updatedCurrentTable;
-            }
-            return table;
-          });
-
-          set({ tables: updatedTables, currentTable: updatedCurrentTable });
-        }
+        updateTables({ action: UpdateTablesAction.Add, objectKey: 'column', value: column });
       },
       editColumn: (columnName: string, newColumn: Column) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
 
-        if (currentTable) {
-          const updatedCurrentTable = {
-            ...currentTable,
-            columns: currentTable.columns.map((column) => {
-              if (column.name === columnName) {
-                column = newColumn;
-              }
-              return column;
-            }),
-          };
-          const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
-              table = updatedCurrentTable;
-            }
-            return table;
-          });
-
-          set({ tables: updatedTables, currentTable: updatedCurrentTable });
-        }
+        updateTables({
+          action: UpdateTablesAction.Edit,
+          objectKey: 'column',
+          previousName: columnName,
+          value: newColumn,
+        });
       },
       deleteColumn: (columnName: string) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
 
-        if (currentTable) {
-          const updatedCurrentTable = {
-            ...currentTable,
-            columns: currentTable.columns.filter((column) => column.name !== columnName),
-          };
-          const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
-              table = updatedCurrentTable;
-            }
-            return table;
-          });
-
-          set({ tables: updatedTables, currentTable: updatedCurrentTable });
-        }
+        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'column', previousName: columnName });
       },
 
       addIndex: (index: Index) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
 
-        if (currentTable) {
-          const updatedCurrentTable = { ...currentTable, indexes: [...(currentTable?.indexes ?? []), index] };
-          const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
-              table = updatedCurrentTable;
-            }
-            return table;
-          });
-
-          set({ tables: updatedTables, currentTable: updatedCurrentTable });
-        }
+        updateTables({ action: UpdateTablesAction.Add, objectKey: 'index', value: index });
       },
       editIndex: (indexName: string, newIndex: Index) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
 
-        if (currentTable) {
-          const updatedCurrentTable = {
-            ...currentTable,
-            indexes: currentTable.indexes.map((index) => {
-              if (index.name === indexName) {
-                index = newIndex;
-              }
-              return index;
-            }),
-          };
-          const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
-              table = updatedCurrentTable;
-            }
-            return table;
-          });
-
-          set({ tables: updatedTables, currentTable: updatedCurrentTable });
-        }
+        updateTables({
+          action: UpdateTablesAction.Edit,
+          objectKey: 'index',
+          previousName: indexName,
+          value: newIndex,
+        });
       },
       deleteIndex: (indexName: string) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
 
-        if (currentTable) {
-          const updatedCurrentTable = {
-            ...currentTable,
-            indexes: currentTable.indexes.filter((index) => index.name !== indexName),
-          };
-          const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
-              table = updatedCurrentTable;
-            }
-            return table;
-          });
-
-          set({ tables: updatedTables, currentTable: updatedCurrentTable });
-        }
+        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'index', previousName: indexName });
       },
 
       addForeignKey: (foreignKey: ForeignKey) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
 
-        if (currentTable) {
-          const updatedCurrentTable = {
-            ...currentTable,
-            foreignKeys: [...(currentTable?.foreignKeys ?? []), foreignKey],
-          };
-          const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
-              table = updatedCurrentTable;
-            }
-            return table;
-          });
-
-          set({ tables: updatedTables, currentTable: updatedCurrentTable });
-        }
+        updateTables({ action: UpdateTablesAction.Add, objectKey: 'foreignKey', value: foreignKey });
       },
       deleteForeignKey: (foreignKeyName: string) => {
-        const { currentTable, tables } = get();
+        const { updateTables } = get();
+
+        updateTables({ action: UpdateTablesAction.Delete, objectKey: 'foreignKey', previousName: foreignKeyName });
+      },
+
+      updateTables: (values) => {
+        const { tables, currentTable } = get();
+
+        let updatedCurrentTable: Table;
 
         if (currentTable) {
-          const updatedCurrentTable = {
-            ...currentTable,
-            foreignKeys: currentTable.foreignKeys.filter((foreignKey) => foreignKey.name !== foreignKeyName),
-          };
+          switch (values.action) {
+            case UpdateTablesAction.Add: {
+              updatedCurrentTable = {
+                ...currentTable,
+                [getPlural(values.objectKey)]: [...(currentTable?.[getPlural(values.objectKey)] ?? []), values.value],
+              };
+              break;
+            }
+            case UpdateTablesAction.Edit: {
+              updatedCurrentTable = {
+                ...currentTable,
+                [getPlural(values.objectKey)]: currentTable[getPlural(values.objectKey)].map((item) => {
+                  if (item.name === values.previousName) {
+                    item = values.value!;
+                  }
+                  return item;
+                }),
+              };
+              break;
+            }
+            case UpdateTablesAction.Delete:
+            default: {
+              updatedCurrentTable = {
+                ...currentTable,
+                [getPlural(values.objectKey)]: (currentTable[getPlural(values.objectKey)] as any).filter(
+                  (item: Column | Index | ForeignKey) => item.name !== values.previousName
+                ) as any,
+              };
+              break;
+            }
+          }
+
           const updatedTables = tables.map((table) => {
-            if (table.name === currentTable.name) {
+            if (table.name === updatedCurrentTable.name) {
               table = updatedCurrentTable;
             }
             return table;

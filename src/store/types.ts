@@ -50,6 +50,8 @@ export interface ErectusStore {
 
   addForeignKey: (foreignKey: ForeignKey) => void;
   deleteForeignKey: (foreignKeyName: string) => void;
+
+  updateTables: (values: UpdateTablesUnion) => void;
 }
 
 export enum ModalState {
@@ -57,3 +59,31 @@ export enum ModalState {
   Add = 'add',
   Edit = 'edit',
 }
+
+export enum UpdateTablesAction {
+  Add = 'add',
+  Edit = 'edit',
+  Delete = 'delete',
+}
+
+interface UpdateTables {
+  action: UpdateTablesAction;
+  previousName?: string;
+}
+
+export interface UpdateTablesColumn extends UpdateTables {
+  objectKey: 'column';
+  value?: Column;
+}
+
+export interface UpdateTablesIndex extends UpdateTables {
+  objectKey: 'index';
+  value?: Index;
+}
+
+export interface UpdateTablesForeignKey extends UpdateTables {
+  objectKey: 'foreignKey';
+  value?: ForeignKey;
+}
+
+export type UpdateTablesUnion = UpdateTablesColumn | UpdateTablesIndex | UpdateTablesForeignKey;
