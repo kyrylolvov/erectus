@@ -12,21 +12,21 @@ export interface TableItem {
 }
 
 export interface Column extends TableItem {
-  type: ColumnType | PrimaryColumnType | '';
+  type: ColumnType | PrimaryColumnType | string;
   primaryKey: boolean;
   notNull: boolean;
 }
 
 export interface Index extends TableItem {
-  columnsTo: string[];
+  columns: string[];
   isUnique: boolean;
 }
 
 export interface ForeignKey extends TableItem {
   tableFrom: string;
-  columnsFrom: string;
+  columnsFrom: string[];
   tableTo: string;
-  columnsTo: string;
+  columnsTo: string[];
   onUpdate: ForeignKeyAction;
   onDelete: ForeignKeyAction;
 }
@@ -36,6 +36,9 @@ export type ForeignKeyAction = 'cascade' | 'restrict' | 'no action' | 'set null'
 export interface ErectusStore {
   tables: Table[];
   currentTable: Table | null;
+
+  fetchSchema: () => Promise<void>;
+  updateSchema: () => Promise<void>;
 
   addTable: (newTable: Table) => void;
   deleteTable: (tableName: string) => void;

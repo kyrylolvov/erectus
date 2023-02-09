@@ -14,7 +14,7 @@ const TablePage: React.FC = () => {
   const { tableId } = useParams();
   const navigate = useNavigate();
 
-  const { currentTable, setCurrentTable } = useStore((state) => state);
+  const { currentTable, setCurrentTable, tables } = useStore((state) => state);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -22,11 +22,13 @@ const TablePage: React.FC = () => {
   const [indexModal, setIndexModal] = useState(ModalState.Closed);
 
   useEffect(() => {
-    setCurrentTable(tableId ?? '');
-  }, []);
+    if (tableId) {
+      setCurrentTable(tableId);
+    }
+  }, [tables]);
 
   const getForeignKeySchema = (column: string) => {
-    const foreignKey = currentTable?.foreignKeys.find((foreignKey) => foreignKey.columnsFrom === column);
+    const foreignKey = currentTable?.foreignKeys.find((foreignKey) => foreignKey.columnsFrom[0] === column);
     let schema = '';
 
     if (foreignKey) {
@@ -120,11 +122,7 @@ const TablePage: React.FC = () => {
               <mui.Typography css={css.tableListTitle}>Foreign Keys</mui.Typography>
               <mui.Box css={css.tableList}>
                 {currentTable.foreignKeys.map((foreignKey) => (
-                  <ListItem
-                    key={`${currentTable.name}-${foreignKey.name}-key`}
-                    text={foreignKey.name}
-                    type="foreignKey"
-                  />
+                  <ListItem key={`${currentTable.name}-${foreignKey.name}-key`} text={foreignKey.name} type="foreignKey" />
                 ))}
               </mui.Box>
             </mui.Box>

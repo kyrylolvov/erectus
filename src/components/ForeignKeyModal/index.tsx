@@ -21,9 +21,9 @@ interface ForeignKeyModalProps {
 interface ForeignKeyModalValues {
   name: string;
   tableFrom: string;
-  columnsFrom: string;
+  columnsFrom: string[];
   tableTo: string;
-  columnsTo: string;
+  columnsTo: string[];
   onUpdate: 'cascade' | 'restrict' | 'no action' | 'set null' | 'set default';
   onDelete: 'cascade' | 'restrict' | 'no action' | 'set null' | 'set default';
 }
@@ -35,9 +35,9 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
     () => ({
       name: open === ModalState.Edit ? foreignKey?.name! : '',
       tableFrom: currentTable?.name ?? '',
-      columnsFrom: open === ModalState.Edit ? foreignKey?.columnsFrom! : column?.name ?? '',
+      columnsFrom: open === ModalState.Edit ? foreignKey?.columnsFrom! : [column?.name ?? ''],
       tableTo: open === ModalState.Edit ? foreignKey?.tableTo! : '',
-      columnsTo: open === ModalState.Edit ? foreignKey?.columnsTo! : '',
+      columnsTo: open === ModalState.Edit ? foreignKey?.columnsTo! : [''],
       onUpdate: open === ModalState.Edit ? foreignKey?.onUpdate! : 'no action',
       onDelete: open === ModalState.Edit ? foreignKey?.onDelete! : 'no action',
     }),
@@ -47,9 +47,9 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
   const validationSchema = yup.object({
     name: yup.string().required("Field can't be empty"),
     tableFrom: yup.string().required("Field can't be empty"),
-    columnsFrom: yup.string().required("Field can't be empty"),
+    columnsFrom: yup.array().of(yup.string()).required("Field can't be empty"),
     tableTo: yup.string().required("Field can't be empty"),
-    columnsTo: yup.string().required("Field can't be empty"),
+    columnsTo: yup.array().of(yup.string()).required("Field can't be empty"),
     onUpdate: yup.string().required("Field can't be empty"),
     onDelete: yup.string().required("Field can't be empty"),
   });
@@ -104,8 +104,8 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
         <Select
           disabled={!values.tableTo}
           label="Related column"
-          value={values.columnsTo}
-          onChange={(e) => setFieldValue('columnsTo', e.target.value)}
+          value={values.columnsTo.length ? values.columnsTo[0] : ''}
+          onChange={(e) => setFieldValue('columnsTo', [e.target.value])}
           renderValue={(selected) =>
             renderSelectValue(
               !values.columnsTo,
@@ -175,11 +175,7 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
       </mui.Box>
 
       <mui.Box sx={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
-        <Button
-          text="Submit"
-          onClick={() => handleSubmit()}
-          disabled={JSON.stringify(errors) !== '{}' || !values.tableTo}
-        />
+        <Button text="Submit" onClick={() => handleSubmit()} disabled={JSON.stringify(errors) !== '{}' || !values.tableTo} />
       </mui.Box>
     </Modal>
   );

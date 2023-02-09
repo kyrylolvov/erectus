@@ -1,6 +1,5 @@
 export const container: CSSWithTheme = () => ({
   padding: '32px 0',
-  height: '100vh',
   maxWidth: '768px',
   margin: '0 auto',
 });

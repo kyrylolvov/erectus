@@ -10,7 +10,7 @@ import { ModalState } from '../../store/types';
 import TableModal from '../../components/TableModal';
 
 const DashboardPage: React.FC = () => {
-  const { tables } = useStore((state) => state);
+  const { tables, updateSchema } = useStore((state) => state);
 
   const [tableModal, setTableModal] = useState<ModalState>(ModalState.Closed);
 
@@ -31,7 +31,7 @@ const DashboardPage: React.FC = () => {
             ))}
           </mui.Box>
           <mui.Box sx={{ marginTop: '24px' }}>
-            <Button text="Export as TypeScript file" width={250} onClick={() => {}} />
+            <Button text="Save Changes" width={150} onClick={() => updateSchema()} />
           </mui.Box>
         </>
       ) : (
