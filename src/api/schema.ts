@@ -2,10 +2,7 @@ import { instance } from './instance';
 
 export const getSchema = async () => instance.get<{ data: Schema }>('');
 
-export const postSchema = async (schema: Schema) =>
-  instance.post<{ data: Schema }>('', {
-    data: schema,
-  });
+export const postSchema = async (schema: Schema) => instance.post<Schema>('', schema);
 
 export interface Schema {
   version: string;

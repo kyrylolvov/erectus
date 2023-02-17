@@ -1,7 +1,7 @@
 import { toast } from 'react-hot-toast';
 import { create } from 'zustand';
+import { getSchema, postSchema } from '../api/schema';
 import { deserializeSchema, getPlural, serializeSchema } from '../utils/common';
-import { apiResponse } from '../utils/constants';
 import { Column, ErectusStore, ForeignKey, Index, Table, TableItem, UpdateTablesAction } from './types';
 
 export const useStore = create<ErectusStore>()((set, get) => ({
@@ -10,10 +10,10 @@ export const useStore = create<ErectusStore>()((set, get) => ({
 
   fetchSchema: async () => {
     try {
-      // const response = await getSchema();
-      const response = apiResponse;
+      const response = await getSchema();
+      // const response = apiResponse;
 
-      if (response.data) set({ tables: serializeSchema(response.data) });
+      if (response.data.data) set({ tables: serializeSchema(response.data.data) });
     } catch (err: any) {
       toast.error(err.message);
     }
@@ -23,8 +23,8 @@ export const useStore = create<ErectusStore>()((set, get) => ({
 
     try {
       const jsonSchema = deserializeSchema(tables);
-      console.log(jsonSchema);
-      // const response = await postSchema(jsonSchema);
+      // console.log(jsonSchema);
+      await postSchema(jsonSchema);
     } catch (err: any) {
       toast.error(err.message);
     }
