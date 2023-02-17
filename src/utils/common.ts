@@ -1,5 +1,6 @@
 import { Schema } from '../api/schema';
 import { Table } from '../store/types';
+import { ColumnType } from './columns';
 
 export const getPlural = (value: 'column' | 'index' | 'foreignKey') => {
   switch (value) {
@@ -29,6 +30,11 @@ export const serializeSchema = (schema: Schema): Table[] => {
   tables.map((table) =>
     table.columns.map((column) => {
       if (column.type.includes('varchar')) {
+        if (/\d/.test(column.type)) {
+          const varcharLength = column.type.split('(')[1].split(')')[0];
+          column.length = varcharLength;
+        }
+
         column.type = 'varchar';
       }
       return column;
@@ -40,14 +46,46 @@ export const serializeSchema = (schema: Schema): Table[] => {
 
 export const deserializeSchema = (tables: Table[]): Schema => {
   const mappedTables = tables.map((table) => {
-    const mappedColumns = table.columns.map((column) => ({
-      [column.name]: {
-        name: column.name,
-        type: column.type,
-        primaryKey: column.primaryKey,
-        notNull: column.notNull,
-      },
-    }));
+    const mappedColumns = table.columns.map((column) => {
+      let defaultValue = column.default;
+
+      if (
+        [
+          ColumnType.Integer,
+          ColumnType.Decimal,
+          ColumnType.Numeric,
+          ColumnType['Big Integer'],
+          ColumnType['Small Integer'],
+        ].includes(column.type as ColumnType)
+      ) {
+        defaultValue = Number(column.default);
+      } else if (column.type === ColumnType.Boolean) {
+        switch (column.default) {
+          case 'true': {
+            defaultValue = true;
+            break;
+          }
+          case 'false': {
+            defaultValue = false;
+            break;
+          }
+          default: {
+            defaultValue = null;
+            break;
+          }
+        }
+      }
+
+      return {
+        [column.name]: {
+          name: column.name,
+          type: column.length ? `varchar(${column.length})` : column.type,
+          primaryKey: column.primaryKey,
+          notNull: column.notNull,
+          ...(column.default && { default: defaultValue }),
+        },
+      };
+    });
 
     const mappedIndexes = table.indexes.map((index) => ({
       [index.name]: {

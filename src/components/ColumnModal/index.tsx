@@ -11,6 +11,7 @@ import {
   getPrimaryColumnTypeName,
   KeyOfColumnType,
   KeyOfPrimaryColumnType,
+  positiveNumberTypingValidation,
   PrimaryColumnType,
   variableNameRegex,
   variableTypingValidation,
@@ -19,6 +20,7 @@ import { useStore } from '../../store';
 import Input from '../Input';
 import Select from '../Select';
 import { Column, ModalState } from '../../store/types';
+import ColumnDefaultValueInput from '../ColumnDefaultValueInput';
 
 interface ColumnModalProps {
   open: ModalState;
@@ -26,9 +28,11 @@ interface ColumnModalProps {
   column?: Column;
 }
 
-interface ColumnModalValues {
+export interface ColumnModalValues {
   columnName: string;
   columnType: ColumnType | PrimaryColumnType | string;
+  columnLength?: string;
+  columnDefaultValue?: any;
   columnIsNullable: boolean;
 }
 
@@ -39,6 +43,8 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
     () => ({
       columnName: column?.name ?? '',
       columnType: column?.type ?? '',
+      columnLength: column?.length ?? '',
+      columnDefaultValue: column?.default ?? '',
       columnIsNullable: !column?.notNull ?? true,
     }),
     [open]
@@ -60,6 +66,7 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
         name: values.columnName,
         type: values.columnType,
         notNull: !values.columnIsNullable,
+        ...(!!values.columnDefaultValue && { default: values.columnDefaultValue }),
         primaryKey: false,
       };
       if (open === ModalState.Add) addColumn(newColumn);
@@ -67,6 +74,10 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
       onClose();
     },
   });
+
+  const handleDefaultValueChange = (value: string) => {
+    setFieldValue('columnDefaultValue', value);
+  };
 
   useEffect(() => {
     resetForm();
@@ -92,7 +103,11 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
           <Select
             label="Column Type"
             value={values.columnType}
-            onChange={(e) => setFieldValue('columnType', e.target.value)}
+            onChange={(e) => {
+              setFieldValue('columnType', e.target.value);
+              setFieldValue('columnLength', '');
+              setFieldValue('columnDefaultValue', '');
+            }}
             renderValue={(selected) => {
               if (selected.length) {
                 return column?.primaryKey
@@ -116,6 +131,30 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
           </Select>
         </mui.Box>
 
+        <mui.Box>
+          <Input
+            label="Column Length"
+            value={values.columnLength ?? ''}
+            placeholder={
+              !values.columnType || values.columnType !== ColumnType.String ? 'Not available for this type' : '255'
+            }
+            name="columnName"
+            disabled={!values.columnType || values.columnType !== ColumnType.String}
+            onChange={(e) => {
+              setFieldValue('columnLength', positiveNumberTypingValidation(e.target.value));
+            }}
+          />
+        </mui.Box>
+      </mui.Box>
+
+      <mui.Box css={css.twoColumnContainer}>
+        <mui.Box>
+          <ColumnDefaultValueInput
+            value={values.columnDefaultValue}
+            type={values.columnType}
+            onChange={handleDefaultValueChange}
+          />
+        </mui.Box>
         <mui.Box
           css={css.checkboxContainer(values.columnIsNullable)}
           onClick={() => setFieldValue('columnIsNullable', !values.columnIsNullable)}
@@ -135,7 +174,8 @@ const ColumnModal: React.FC<ColumnModalProps> = ({ open, onClose, column }) => {
           disabled={
             JSON.stringify(errors) !== '{}' ||
             values.columnName === '' ||
-            !!currentTable?.columns.find((column) => column.name === values.columnName)
+            column?.primaryKey ||
+            (!column && !!currentTable?.columns.find((column) => column.name === values.columnName))
           }
         />
       </mui.Box>

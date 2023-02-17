@@ -19,6 +19,7 @@ export interface Schema {
           name: string;
           primaryKey: boolean;
           notNull: boolean;
+          length?: string;
           default?: any;
         };
       };

@@ -175,7 +175,11 @@ const ForeignKeyModal: React.FC<ForeignKeyModalProps> = ({ open, onClose, column
       </mui.Box>
 
       <mui.Box sx={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
-        <Button text="Submit" onClick={() => handleSubmit()} disabled={JSON.stringify(errors) !== '{}' || !values.tableTo} />
+        <Button
+          text="Submit"
+          onClick={() => handleSubmit()}
+          disabled={JSON.stringify(errors) !== '{}' || !values.name.length}
+        />
       </mui.Box>
     </Modal>
   );

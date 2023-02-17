@@ -8,16 +8,18 @@ interface InputProps {
   placeholder: string;
   onChange?: (e: mui.SelectChangeEvent<any>) => void;
   name?: string;
+  type?: 'number' | 'text';
   disabled?: boolean;
 }
 
-const Input: React.FC<InputProps> = ({ label, value, onChange, disabled, placeholder, name }) => (
+const Input: React.FC<InputProps> = ({ label, value, onChange, disabled, placeholder, name, type }) => (
   <mui.Box>
     <mui.Typography css={css.inputLabel}>{label}</mui.Typography>
     <input
       className="erectus-input"
       value={value}
       name={name}
+      type={type}
       onChange={onChange}
       css={css.input}
       placeholder={placeholder}
