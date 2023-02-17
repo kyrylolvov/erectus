@@ -105,7 +105,7 @@ const IndexModal: React.FC<IndexModalProps> = ({ open, onClose, index }) => {
           disabled={
             JSON.stringify(errors) !== '{}' ||
             !values.columns.length ||
-            !!currentTable?.indexes.some((index) => arraysEqual(index.columns, values.columns))
+            (!index && !!currentTable?.indexes.some((index) => arraysEqual(index.columns, values.columns)))
           }
         />
       </mui.Box>

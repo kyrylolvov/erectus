@@ -13,6 +13,8 @@ export interface TableItem {
 
 export interface Column extends TableItem {
   type: ColumnType | PrimaryColumnType | string;
+  length?: string;
+  default?: any;
   primaryKey: boolean;
   notNull: boolean;
 }
